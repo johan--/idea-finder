@@ -52,27 +52,127 @@ and save/overwrite `~/problem-finder/discovery.md` with it before proceeding.
 Jump straight into the interview. No preamble, no explanation of the skill.
 Open with exactly this:
 
-> "Let's find you a problem worth solving. A few questions first — I'll
-> research your industries while we talk.
+> "Let's find you a problem worth solving. Most people I talk to already have
+> the ingredients — they just haven't looked at themselves the right way yet.
+> I'm going to ask you about your whole life, not just your job. Ready?
 >
-> What's your professional background? What domain or industry have you worked
-> in for most of your career?"
+> Start with the basics: what do you do for work, and what have you done
+> before that?"
 
-Then ask the remaining interview questions conversationally, one or two at a
-time — not as a numbered list. Cover:
+Ask all questions below conversationally — one or two at a time, never as a
+numbered list. Listen carefully and follow up on anything specific before
+moving on. Take your time here. The quality of what comes later depends
+entirely on how much you learn now.
 
-1. **Network:** Who do you know well enough to have an honest 30-min
-   conversation with? (Job titles, industries, company sizes)
-2. **Domain knowledge:** Which of those industries do you understand from
-   the inside?
-3. **Resources:** Time available? Technical ability? Any budget?
-4. **Constraints:** Industries to avoid? B2B or B2C preference?
-5. **Goals:** Lifestyle business or venture scale?
+### Block 1 — Professional identity
 
-**After the founder answers each question:** acknowledge briefly and move to
-the next. When you have enough to start researching (usually after 3–4
-exchanges), tell them "Good — let me research those industries now" and
-proceed to Step 2.
+- What do you do for work right now? What does a typical day actually look like?
+- How long have you been doing it, and what did you do before?
+- What's the part of your job that most people outside your field don't
+  understand or appreciate?
+- What inefficiencies or broken things do you see in your industry that
+  outsiders would never notice?
+- Have you ever had a moment at work where you thought "why is no one
+  solving this?" — what was it?
+
+### Block 2 — Hidden expertise and reputation
+
+- What do people ask YOU for help with — colleagues, friends, family? What
+  are you the go-to person for?
+- What's something you know a lot about that most people around you don't?
+- Is there something you've fixed, built, or figured out for yourself that
+  others said "you should sell that"?
+- What have you gotten unusually good at just from repetition or necessity?
+
+### Block 3 — Personal identities and life situations
+
+Explain briefly before asking: "Now I want to ask about your personal life —
+because some of the best startup ideas come from markets people are part of
+every day without thinking of themselves as a 'market'."
+
+- Do you have kids? How old? What stage are they at — daycare, school,
+  college, leaving home?
+- Do you have pets? What kind, and how involved are you in their care?
+- Are you a homeowner or renter? How long, and where?
+- Do you help care for elderly or sick parents or family members?
+- Do you have any ongoing health conditions or chronic things you manage —
+  for yourself or someone close to you?
+- Are you part of any religious, cultural, or ethnic community that has its
+  own specific needs or services?
+- Are you an immigrant or expat, or do you work across cultures or languages?
+
+### Block 4 — Interests, hobbies, and communities
+
+- What do you do outside of work that you're genuinely passionate about?
+  Sports, creative pursuits, volunteering, anything?
+- Are you part of any clubs, leagues, associations, or communities —
+  online or in person?
+- What do you geek out about? What rabbit holes do you fall into?
+- Is there a subculture or niche world you're deeply embedded in that most
+  people don't know much about?
+
+### Block 5 — Consumer frustrations and spending
+
+- What do you spend money on regularly that you're not happy with — services,
+  subscriptions, products?
+- What's something you pay for where you always feel like it could be so much
+  better?
+- What's the last thing you searched "is there an app for..." and couldn't
+  find a good answer?
+- What industry have you been a customer in long enough that you see all its
+  flaws clearly?
+
+### Block 6 — Problems they're already living with
+
+- What do you do manually every week that should be automatic but isn't?
+- What's something in your life or work you've rigged together with a
+  spreadsheet, a workaround, or sheer force of habit because no good tool exists?
+- What do you complain about repeatedly to friends or your partner?
+- What's the most recent thing you tried to fix or improve — in your life or
+  work — and couldn't find a satisfying solution for?
+- Is there anything you're actively trying to solve right now, even informally?
+
+### Block 7 — Identity reflection (do this before moving to research)
+
+Before proceeding, reflect back everything you've heard. Name every market and
+identity the founder represents — they may not see themselves this way. Frame
+it like this:
+
+> "Before we start researching, I want to show you something. Based on what
+> you've told me, you're not just a [job title]. You're also:
+> — A [pet owner / parent of a toddler / caregiver / renter / chronic
+>   condition manager / amateur athlete / member of X community / etc.]
+>
+> Each of these is a real market full of real problems. We're going to look at
+> all of them, not just your professional world."
+
+List every identity you identified. Ask: "Does anything on that list
+surprise you? Is there anything I missed?"
+
+### Block 8 — Resources and constraints
+
+- How much time can you put into this — nights and weekends, or are you
+  thinking full-time?
+- Can you build things yourself, or would you need a technical co-founder?
+- Do you have any savings or runway to work with?
+- Are there industries you'd rather avoid — for ethical, personal, or
+  practical reasons?
+- Are you thinking about a small profitable business, or something that
+  could scale big?
+
+### Block 9 — Network (last in Session 1)
+
+- Across all the identities and worlds we've talked about — professional,
+  personal, community — who do you know well enough that they'd take a
+  30-minute honest call with you?
+- Who in your life complains about their work or a recurring problem the most?
+- Is there anyone you know who's really deep in one of the industries or
+  communities we talked about — someone who would give you the unfiltered truth?
+
+**After completing all blocks:** tell them "Good — let me research the most
+promising areas now" and proceed to Step 2. The areas to research should span
+both their professional world AND their personal identities where you spotted
+the strongest pain signals.
 
 **Create the document skeleton immediately** after the first exchange:
 ```bash
@@ -213,21 +313,49 @@ Saved: ~/problem-finder/discovery.md
 ═══════════════════════════════════════════════════════════
 
 ## FOUNDER PROFILE
-Background: [domain expertise, years]
-Expertise: [what they know deeply]
-Technical ability: [can they build? full-stack? no-code?]
+
+### Professional
+Current role: [title, industry, how long]
+Past roles: [previous careers or industries]
+Insider knowledge: [what they understand deeply that outsiders miss]
+Hidden expertise: [what people ask them for help with]
+Built or hacked: [things they've rigged together or fixed themselves]
+
+### Personal identities and life situations
+[List every identity uncovered — check all that apply and add detail]
+- Parent: [kids' ages/stages]
+- Pet owner: [type, involvement level]
+- Homeowner / Renter: [how long, context]
+- Caregiver: [who, situation]
+- Chronic condition manager: [self or family member]
+- Religious/cultural community: [which, how involved]
+- Immigrant/expat: [context]
+- Other: [anything else]
+
+### Interests, hobbies, communities
+[What they do outside work, clubs/leagues/associations, obsessions, subcultures]
+
+### Consumer frustrations
+[What they pay for and hate, searches for "is there an app for X", industries they know as a flawed customer]
+
+### Problems they're already solving
+[Manual workarounds, spreadsheets, repeated complaints, active unsolved problems]
+
+### Markets they represent
+[Full list of every market/identity the founder belongs to — professional + personal]
+
+### Resources and constraints
+Technical ability: [can build / needs co-founder / no-code only]
 Time available: [hours/week or full-time]
-Resources: [budget, existing audience, prior startup experience]
+Runway/budget: [savings, timeline]
+Industries to avoid: [ethical, personal, practical reasons]
+Scale goal: [lifestyle / venture]
 
-Industries known:
-- [Industry 1]: [depth — insider/observer/adjacent]
-- [Industry 2]: ...
-
-Network map:
+### Network map
 | Role | What they do | Score /25 | Why interesting |
 |------|-------------|-----------|-----------------|
 
-TOP INTERVIEW TARGETS: [ordered list]
+TOP INTERVIEW TARGETS: [ordered list with rationale]
 
 ---
 
