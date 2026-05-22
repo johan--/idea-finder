@@ -11,7 +11,8 @@ description: >
   start", "I'm exploring startup ideas", or "I have X background and Y network
   — help me find a problem." Trigger even if the user hasn't used the word
   "skill" or "problem-finder." Invoke with /problem-finder to start or resume a
-  discovery session.
+  discovery session. Invoke with /dig or /dig [role] to go deeper on a specific
+  role at any time.
 ---
 
 # Problem Finder — Co-Founder Discovery Agent
@@ -24,7 +25,11 @@ decide what to build after validation.
 
 ## HOW TO START
 
-Type `/problem-finder` to begin or resume a session.
+Type `/problem-finder` to begin or resume a discovery session.
+
+Type `/dig [role]` at any point — mid-interview, after research, or in a later
+session — to go deeper on a specific role and surface sharper problems,
+workarounds, and willingness-to-pay signals.
 
 ---
 
@@ -40,6 +45,47 @@ If the user's message contains a Discovery Document → go to **ROUND N**,
 save/overwrite `~/problem-finder/discovery.md` with it before proceeding.
 
 **Default** → **ROUND 1**
+
+---
+
+## DIG COMMAND — /dig [role]
+
+**Trigger:** user types `/dig`, `/dig [role name]`, "go deeper on [role]",
+"explore my [role] more", or asks sharper questions about a specific market.
+
+This is a focused zoom-in on one role. It does not restart anything — it adds
+depth to an existing role and updates the discovery document.
+
+**Steps:**
+
+1. **Choose a role** — if no role is specified, show the Roles List from the
+   discovery document and ask which to explore. If no document exists yet,
+   ask them to name the role.
+
+2. **Ask 8 deeper questions** — conversationally, 2–3 at a time with real
+   follow-ups before moving on:
+   - "Walk me through a specific bad week as a [Role]. What exactly broke?"
+   - "What's the worst version of [top pain] you've personally experienced?
+     Consequences — time lost, money lost, relationship strain?"
+   - "Put a number on it: hours per week or dollars per year."
+   - "What do you do RIGHT NOW to manage [pain]? Walk me through every step —
+     tools, workarounds, habits."
+   - "Have you ever searched for a better solution? What did you find, and why
+     didn't it work?"
+   - "Who else in your world deals with this — people you know by name?"
+   - "Describe a perfect fix in one sentence — what would it do in the first
+     five minutes?"
+   - "What would you pay for that? What's expensive vs. fair?"
+
+3. **Update the discovery document** — add new findings to the role's ROLE
+   RESEARCH section: workarounds, tech narratives, TAM estimate, user
+   challenges with ratings.
+
+4. **Re-render** — run the render script to update the HTML web app:
+   ```bash
+   python3 ~/problem-finder/scripts/render.py ~/problem-finder/discovery.md ~/problem-finder/discovery.html
+   open ~/problem-finder/discovery.html
+   ```
 
 ---
 
@@ -214,13 +260,13 @@ List from what you've heard. Frame it like this:
 
 List roles in this format — name every identity, no matter how small:
 
-| Role | Category | What it gives you |
-|------|----------|------------------|
-| Software Engineer | Professional | Insider view of dev tooling pain |
-| Mountain Biker | Hobby | Deep user of trail/gear ecosystem |
-| Renter in SF | Life | First-hand experience of rental friction |
-| Son with aging parents | Family | Proximity to eldercare market |
-| Friend coordinator | Social | Organizes group activities, feels the friction |
+| Role | Category | Emoji | How Identified |
+|------|----------|-------|----------------|
+| Software Engineer | professional | 💻 | Current job |
+| Mountain Biker | hobby | 🚵 | Mentioned hobby |
+| Renter in SF | life | 🏠 | Mentioned housing situation |
+| Son with aging parents | family | 👴 | Mentioned care involvement |
+| Friend coordinator | social | 👥 | Organizes group activities |
 
 Then ask: "Does anything on that list surprise you? Did I miss anything?"
 
@@ -238,14 +284,31 @@ Then ask: "Does anything on that list surprise you? Did I miss anything?"
 
 ---
 
-### BLOCK 13 — Network (last in Session 1)
+### BLOCK 13 — Your network (named contacts — last in Session 1)
 
-- Across all the worlds we've talked about — professional, personal,
-  community — who do you know well enough that they'd take an honest
-  30-minute call with you?
-- Who in your life complains most about their work or a recurring problem?
-- Is there anyone you know who's really deep in one of these areas and
-  would give you the unfiltered truth?
+Frame it this way before asking:
+
+> "Last thing — and this one matters a lot. I'm not asking about categories
+> of people you could theoretically know. I want real names. Who are the 5
+> to 10 people you could text right now, today, and they'd agree to a
+> 30-minute honest conversation? Think about your last week: who did you
+> message, see at work, run into, or think about?"
+
+For each person they name, collect conversationally (one at a time):
+- First name and last initial
+- How do you know them — colleague, old friend, family, community?
+- What do they do — job title, industry, context?
+- Which of your roles do they share, inform, or work close to?
+- Have you ever heard them complain about the same thing repeatedly?
+
+**Push for at least 5 names.** If they stall: "Think about people from
+different parts of your life — work friends, people from [hobby or community
+they mentioned], old colleagues, family members with interesting jobs."
+
+After collecting names, summarize:
+> "Here's your starting lineup: [list with what they do]. These are your
+> first interview targets. Type /problem-finder next session and I'll
+> load your document with interview scripts ready."
 
 ---
 
@@ -253,17 +316,25 @@ Then ask: "Does anything on that list surprise you? Did I miss anything?"
 
 ### Step 2 — Research every role
 
-For each role in the Roles List, run web searches to find:
+For each role in the Roles List, run web searches to find all six dimensions:
 - **Goals:** What are people in this role trying to achieve?
 - **Success definition:** What does winning look like for them?
-- **Pain points:** What do they report struggling with most? (Search
-  Reddit, forums, reviews, surveys)
+- **Pain points:** What do they report struggling with most? (Reddit,
+  forums, product reviews, industry surveys)
+- **Workarounds:** What tools, hacks, or manual processes do people use
+  today? (search "[role] workaround", "[role] how do people manage",
+  "[problem] spreadsheet OR manual OR duct tape")
+- **Tech narratives:** What new technology could change how these problems
+  get solved? (search "AI [role]", "new tools for [role]", "[problem] 2024
+  automation")
+- **TAM estimate:** How large is this market? (search "[role] market size",
+  "[industry] TAM"; or calculate: # people in this role × what they'd pay)
 
 Load `references/industry-workflow.md` for search query templates.
 Load `references/pain-extraction.md` for what counts as real pain.
 
 Run at least 3 searches per role. Update `~/problem-finder/discovery.md`
-with a ROLE RESEARCH section for each role after it's done.
+with a ROLE RESEARCH section for each role covering all six dimensions.
 
 Tell the founder: "Researching your [N] roles — this will take a few
 minutes."
@@ -309,8 +380,9 @@ Tell the founder:
 > "Your Discovery Document is open in your browser at
 > ~/problem-finder/discovery.html. It updates every session.
 >
-> Next step: do the interviews using the scripts. When you're back, type
-> /problem-finder — I'll load your document automatically."
+> Next step: use your Network tab to run interviews. When you're back,
+> type /problem-finder — I'll load your document automatically.
+> Type /dig [role] anytime to go deeper on any specific role."
 
 ---
 
@@ -420,11 +492,21 @@ Pain points (from web research):
 - [specific pain with source]
 - [specific pain with source]
 
-Current solutions:
-- [tool/approach + its gap]
+Workarounds:
+- [what people currently do to manage this pain — tool, hack, or habit]
+- [how painful/clunky that workaround is]
+
+Tech narratives:
+- [new technology or behavioral shift that could change how this pain is solved]
+- [why now — what recently became possible]
+
+TAM estimate:
+- [# of people in this role]: [source or estimate]
+- [what a solution would cost them per year]: [estimate]
+- [rough TAM]: [# × price]
 
 User's personal challenges:
-- [what they said — rating and quotes]
+- [what they said — rating 1-5 and quotes]
 
 ---
 
@@ -443,6 +525,14 @@ Pain moment: [exactly what breaks]
 Workaround: [what they do instead]
 Score: [X/50]
 Status: ACTIVE / ELIMINATED
+
+---
+
+## NETWORK CONTACTS
+
+| Name | How You Know Them | What They Do | Role Overlap | Interviewed? |
+|------|------------------|--------------|--------------|--------------|
+| [first name last-initial] | [colleague/friend/family/community] | [job + industry] | [which roles they inform] | No |
 
 ---
 
