@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Problem Finder — Discovery Document HTML Renderer
+Summary-first: main takeaways always visible, full data in expandable sections.
 Usage: python3 render.py [input.md] [output.html]
 """
 import sys, re
@@ -25,6 +26,7 @@ def cat_style(s):
 def safe_id(s):
     return re.sub(r'[^a-z0-9]+', '-', s.lower()).strip('-')
 
+# ── Parser ────────────────────────────────────────────────────────────────────
 def parse_document(text):
     d = {
         "meta": {"version":"1","date":"","round":"1"},
@@ -48,7 +50,16 @@ def parse_document(text):
         for ln in t.split('\n'):
             ln = ln.strip()
             if ln.startswith(('- ','* ','• ')):
-                out.append(ln[2:].strip())
+                v = ln[2:].strip()
+                if v and '[PENDING]' not in v: out.append(v)
+        return out
+
+    def all_bullets(t):
+        """Include pending items too, for completeness checks"""
+        out = []
+        for ln in t.split('\n'):
+            ln = ln.strip()
+            if ln.startswith(('- ','* ','• ')): out.append(ln[2:].strip())
         return [x for x in out if x]
 
     def parse_table(t):
@@ -66,7 +77,8 @@ def parse_document(text):
         if ':' in ln and not ln.strip().startswith('-'):
             k, _, v = ln.partition(':')
             k = k.strip().lower().replace(' ','_'); v = v.strip()
-            if k and v and not v.startswith('['): d["profile"][k] = v
+            if k and v and not v.startswith('[') and v != '[PENDING]':
+                d["profile"][k] = v
 
     d["education"]             = bullets(sec("EDUCATION"))
     d["work_history"]          = bullets(sec("WORK HISTORY"))
@@ -82,7 +94,8 @@ def parse_document(text):
         ln = ln.strip()
         if ':' in ln and not ln.startswith('-'):
             k, _, v = ln.partition(':')
-            if k.strip() and v.strip() and not v.strip().startswith('['): rel[k.strip()] = v.strip()
+            if k.strip() and v.strip() and not v.strip().startswith('['):
+                rel[k.strip()] = v.strip()
     rel['_bullets'] = bullets(rel_text)
     d["relationships"] = rel
 
@@ -112,7 +125,9 @@ def parse_document(text):
             elif sl.startswith('tech narrative'): cur = rd["tech_narratives"]
             elif sl.startswith('tam') or sl.startswith('market size'): cur = rd["tam"]
             elif sl.startswith('user') and ('challenge' in sl or 'personal' in sl): cur = rd["user_challenges"]
-            elif s.startswith(('- ','* ','• ')) and cur is not None: cur.append(s[2:].strip())
+            elif s.startswith(('- ','* ','• ')) and cur is not None:
+                v = s[2:].strip()
+                if v and '[PENDING]' not in v: cur.append(v)
         d["role_research"][rname] = rd
 
     for block in re.split(r'\n### Problem\s*\d*\s*:', '\n' + sec("CANDIDATE PROBLEMS")):
@@ -132,113 +147,199 @@ def parse_document(text):
     ]
     return d
 
-def pending_card(prompt, icon='⏳'):
-    return '<div class="pending"><span class="pending-icon">' + icon + '</span><p class="pending-text">' + esc(prompt) + '</p></div>'
-
+# ── HTML primitives ───────────────────────────────────────────────────────────
 def blist(items):
     if not items: return ''
-    lis = ''.join('<li>' + esc(i) + '</li>' for i in items if i)
-    return '<ul class="blist">' + lis + '</ul>'
+    return '<ul class="blist">' + ''.join('<li>' + esc(i) + '</li>' for i in items if i) + '</ul>'
 
-def sub_card(title, icon, items, empty_prompt, accent=''):
-    border = 'border-left:3px solid ' + accent + ';' if accent else ''
-    body = blist(items) if items else pending_card(empty_prompt)
-    return '<div class="sub-card" style="' + border + '"><h4 class="sub-title">' + icon + ' ' + esc(title) + '</h4>' + body + '</div>'
+def empty_state(msg):
+    return '<p class="muted-hint">' + esc(msg) + '</p>'
 
+def details_block(summary_label, count_badge, body_html, open_by_default=False):
+    """Expandable section using native <details>/<summary>"""
+    count_html = (' <span class="det-count">' + str(count_badge) + '</span>') if count_badge else ''
+    open_attr = ' open' if open_by_default else ''
+    return (
+        '<details class="det-block"' + open_attr + '>'
+        + '<summary class="det-summary">'
+        + '<span class="det-label">' + esc(summary_label) + count_html + '</span>'
+        + '<span class="det-arrow">›</span>'
+        + '</summary>'
+        + '<div class="det-body">' + body_html + '</div>'
+        + '</details>'
+    )
+
+def takeaway_line(icon, label, value, cls=''):
+    if not value: return ''
+    return (
+        '<div class="takeaway-row ' + cls + '">'
+        + '<span class="ta-icon">' + icon + '</span>'
+        + '<span class="ta-label">' + esc(label) + '</span>'
+        + '<span class="ta-val">' + esc(value) + '</span>'
+        + '</div>'
+    )
+
+# ── Tab: You ──────────────────────────────────────────────────────────────────
 def tab_you(d):
     p = d["profile"]
-    fields = [(k,lbl) for k,lbl in [
-        ('name','Name'),('age','Age'),('gender','Gender'),
-        ('location_current','Location'),('location_grew_up','Grew up')] if p.get(k)]
-    if fields:
-        profile_html = '<div class="profile-grid">' + ''.join(
-            '<div class="pfield"><span class="plabel">' + lbl + '</span><span class="pval">' + esc(p[k]) + '</span></div>'
-            for k,lbl in fields) + '</div>'
-    else:
-        profile_html = pending_card("Start the interview to fill in your profile.")
 
-    roles = d["roles"]
+    # Compact profile bar
+    profile_parts = []
+    for k, lbl in [('name',''),('age',''),('gender',''),('location_current','📍')]:
+        v = p.get(k,'')
+        if v:
+            profile_parts.append(('<span class="prof-sep">·</span>' if profile_parts and not lbl else '') + ('<span class="prof-icon">' + lbl + '</span>' if lbl else '') + esc(v))
+    profile_bar = ('<div class="profile-bar">' + ' '.join(profile_parts) + '</div>') if profile_parts else empty_state("Start the interview to build your profile.")
+
+    roles = d["roles"]; n_c = len(d["network_contacts"]); n_o = len(d["candidate_problems"])
+    stats_bar = (
+        '<div class="stats-bar">'
+        + '<span class="stat-chip">' + str(len(roles)) + ' roles</span>'
+        + '<span class="stat-chip">' + str(n_c) + ' contacts</span>'
+        + '<span class="stat-chip">' + str(n_o) + ' opportunities</span>'
+        + '</div>'
+    )
+
+    # Active problems — always visible (these are the founder's own pains)
+    ap = d["active_problems"]
+    ap_html = (
+        '<div class="card">'
+        + '<h3 class="card-title">🔧 Active Problems <span class="card-sub-hint">what you\'re already trying to solve</span></h3>'
+        + (blist(ap) if ap else empty_state("What are you actively trying to solve right now? (Block 10)"))
+        + '</div>'
+    )
+
+    # Education + Work — expandable
+    edu_work = (
+        (blist(d["education"]) or empty_state("Education not yet captured (Block 2)"))
+        + '<h4 class="det-inner-title">💼 Work History</h4>'
+        + (blist(d["work_history"]) or empty_state("Work history not yet captured (Block 3)"))
+    )
+    edu_det = details_block("🎓 Education & Work Background", None, edu_work)
+
+    # Hobbies + Frustrations — expandable
+    hobby_frust = (
+        (blist(d["hobbies"]) or empty_state("Hobbies not yet captured (Block 8)"))
+        + '<h4 class="det-inner-title">😤 Consumer Frustrations</h4>'
+        + (blist(d["consumer_frustrations"]) or empty_state("Frustrations not yet captured (Block 9)"))
+    )
+    hobby_det = details_block("🎯 Hobbies, Interests & Frustrations", None, hobby_frust)
+
+    # Relationships — expandable
+    rel = d["relationships"]
+    rel_parts = [('<strong>' + esc(k) + ':</strong> ' + esc(v)) for k,v in rel.items() if k != '_bullets' and v]
+    rel_parts += [esc(b) for b in rel.get('_bullets',[])]
+    rel_html = ('<ul class="blist">' + ''.join('<li>' + x + '</li>' for x in rel_parts) + '</ul>') if rel_parts else empty_state("Relationships not yet captured (Block 7)")
+    rel_det = details_block("💬 Relationships & Family", None, rel_html)
+
+    # Roles mini-grid — always visible
     if roles:
         mini = []
         for r in roles:
             cs = cat_style(r['category']); sid = safe_id(r['name'])
             mini.append(
-                '<div class="mini-role" style="background:' + cs['bg'] + ';border-color:' + cs['bdr'] + ';" onclick="openRole(\'' + sid + '\')">'
+                '<div class="mini-role" style="background:' + cs['bg'] + ';border-color:' + cs['bdr'] + ';" onclick="switchToRoles(\'' + sid + '\')">'
                 + '<span class="mini-emoji">' + esc(r['emoji']) + '</span>'
                 + '<div><div class="mini-name">' + esc(r['name']) + '</div>'
                 + '<div class="mini-cat" style="color:' + cs['txt'] + '">' + esc(cs['lbl']) + '</div></div></div>'
             )
         roles_html = '<div class="mini-roles-grid">' + ''.join(mini) + '</div>'
     else:
-        roles_html = pending_card("Complete the interview to build your Roles List — every market you represent.")
+        roles_html = empty_state("Roles not yet mapped — complete Block 11 to build your Roles List.")
 
     return (
         '<div class="tab-section">'
-        + '<div class="card"><h3 class="card-title">👤 Profile</h3>' + profile_html + '</div>'
-        + '<div class="two-col">'
-        + '<div class="card"><h3 class="card-title">🎓 Education</h3>' + (blist(d["education"]) or pending_card("Share your educational background — schools, degrees, what you studied.")) + '</div>'
-        + '<div class="card"><h3 class="card-title">💼 Work History</h3>' + (blist(d["work_history"]) or pending_card("Walk through your career — roles, industries, what you actually did.")) + '</div>'
-        + '</div>'
-        + '<div class="two-col">'
-        + '<div class="card"><h3 class="card-title">😤 Consumer Frustrations</h3>' + (blist(d["consumer_frustrations"]) or pending_card("What do you pay for regularly that you're not happy with?")) + '</div>'
-        + '<div class="card"><h3 class="card-title">🔧 Active Problems</h3>' + (blist(d["active_problems"]) or pending_card("What are you actively trying to solve right now, even informally?")) + '</div>'
-        + '</div>'
         + '<div class="card">'
-        + '<h3 class="card-title">🎭 Your Roles <span class="count-badge">' + str(len(roles)) + '</span></h3>'
-        + '<p class="card-sub">Every role is a market you understand from the inside. Click any to explore.</p>'
+        + '<h3 class="card-title">👤 Founder</h3>'
+        + profile_bar + stats_bar
+        + '</div>'
+        + ap_html
+        + '<div class="card detblocks">' + edu_det + hobby_det + rel_det + '</div>'
+        + '<div class="card">'
+        + '<h3 class="card-title">🎭 Your Roles <span class="count-chip">' + str(len(roles)) + '</span></h3>'
+        + '<p class="card-sub-hint">Every role is a market you understand from the inside. Click to explore in the Roles tab.</p>'
         + roles_html + '</div>'
         + '</div>'
     )
 
+# ── Tab: Roles ────────────────────────────────────────────────────────────────
 def tab_roles(d):
     roles = d["roles"]; research = d["role_research"]
     if not roles:
-        return '<div class="tab-section">' + pending_card("Complete the founder interview to build your Roles List.") + '</div>'
+        return '<div class="tab-section"><div class="card">' + empty_state("Complete the founder interview to build your Roles List.") + '</div></div>'
 
-    pills = []
-    for i, r in enumerate(roles):
-        cs = cat_style(r['category']); sid = safe_id(r['name'])
-        active_cls = 'pill-active' if i == 0 else ''
-        pills.append(
-            '<div class="role-pill ' + active_cls + '" id="pill-' + sid + '"'
-            + ' style="--cat-bg:' + cs['bg'] + ';--cat-bdr:' + cs['bdr'] + ';--cat-txt:' + cs['txt'] + '"'
-            + ' onclick="selectRole(\'' + sid + '\')">'
-            + '<span>' + esc(r['emoji']) + '</span>'
-            + '<span class="pill-name">' + esc(r['name']) + '</span></div>'
-        )
-
-    panels = []
-    for i, r in enumerate(roles):
+    cards = []
+    for r in roles:
         cs = cat_style(r['category']); sid = safe_id(r['name'])
         rr = research.get(r['name'], {})
         rn = r['name']
-        insight_html = ''
-        if r.get("how") and not r["how"].startswith("["):
-            insight_html = '<p class="rpanel-insight">' + esc(r["how"]) + '</p>'
-        panels.append(
-            '<div class="role-panel" id="panel-' + sid + '" style="display:' + ('block' if i==0 else 'none') + '">'
-            + '<div class="rpanel-header" style="background:' + cs['bg'] + ';border-color:' + cs['bdr'] + '">'
-            + '<span class="rpanel-emoji">' + esc(r['emoji']) + '</span>'
-            + '<div><h2 class="rpanel-name">' + esc(rn) + '</h2>'
+        status = rr.get('status','pending')
+        status_dot = ('🟢' if status == 'done' else '🟡') + ' ' + status.capitalize()
+
+        # ── Summary takeaways (always visible) ──
+        top_pain = rr.get("pain_points",[''])[0] if rr.get("pain_points") else None
+        top_tam  = rr.get("tam",[''])[0] if rr.get("tam") else None
+        top_work = rr.get("workarounds",[''])[0] if rr.get("workarounds") else None
+
+        pain_line = takeaway_line('🔥', 'Top pain:', top_pain, 'ta-pain') if top_pain else ''
+        tam_line  = takeaway_line('📊', 'Market:', top_tam) if top_tam else ''
+        work_line = takeaway_line('🔧', 'Today\'s fix:', top_work, 'ta-work') if top_work else ''
+
+        no_takeaways = not (top_pain or top_tam or top_work)
+        if no_takeaways:
+            takeaway_html = empty_state("Research pending — type /dig " + rn + " to explore this role")
+        else:
+            takeaway_html = '<div class="takeaway-block">' + pain_line + tam_line + work_line + '</div>'
+
+        # ── Expandable: Goals & Pain ──
+        goals_pain = ''
+        if rr.get("goals"):
+            goals_pain += '<h4 class="det-inner-title">🎯 Goals</h4>' + blist(rr["goals"])
+        if rr.get("success"):
+            goals_pain += '<h4 class="det-inner-title">✅ Success looks like</h4>' + blist(rr["success"])
+        if rr.get("pain_points"):
+            goals_pain += '<h4 class="det-inner-title">🔥 All Pain Points</h4>' + blist(rr["pain_points"])
+        gp_det = details_block("Goals & Pain Points", len(rr.get("pain_points",[])) or None, goals_pain or empty_state("Research not yet done for this role."))
+
+        # ── Expandable: Workarounds & Tech ──
+        work_tech = ''
+        if rr.get("workarounds"):
+            work_tech += '<h4 class="det-inner-title">🔧 Current Workarounds</h4>' + blist(rr["workarounds"])
+        if rr.get("tech_narratives"):
+            work_tech += '<h4 class="det-inner-title">💡 New Tech & Narratives</h4>' + blist(rr["tech_narratives"])
+        wt_det = details_block("Workarounds & Tech Opportunity", None, work_tech or empty_state("Type /dig " + rn + " to explore workarounds and tech angles."))
+
+        # ── Expandable: Your Experience ──
+        exp_html = blist(rr.get("user_challenges",[])) or empty_state("Which of these pains do YOU personally experience? Rate each 1–5 (Block 3 of interview).")
+        exp_det = details_block("Your Personal Experience", None, exp_html)
+
+        # ── Card assembly ──
+        cards.append(
+            '<div class="role-card" id="role-' + sid + '">'
+            + '<div class="rc-header" style="background:' + cs['bg'] + ';border-color:' + cs['bdr'] + '">'
+            + '<span class="rc-emoji">' + esc(r['emoji']) + '</span>'
+            + '<div class="rc-meta">'
+            + '<h3 class="rc-name">' + esc(rn) + '</h3>'
+            + '<div class="rc-badges">'
             + '<span class="cat-badge" style="background:' + cs['bg'] + ';color:' + cs['txt'] + ';border-color:' + cs['bdr'] + '">' + esc(cs['lbl']) + '</span>'
-            + insight_html + '</div></div>'
-            + '<div class="rpanel-body"><div class="subcards-grid">'
-            + sub_card("Goals", "🎯", rr.get("goals",[]), "What are people in the '" + rn + "' role trying to achieve?", cs['dot'])
-            + sub_card("Problems & Pain Points", "🔥", rr.get("pain_points",[]), "What do '" + rn + "' people struggle with most? Type /dig " + rn + " to go deeper.", '#EF4444')
-            + sub_card("How They Solve It Today", "🔧", rr.get("workarounds",[]), "What tools, hacks, or manual processes do '" + rn + "' people use right now?", '#F59E0B')
-            + sub_card("New Tech & Narratives", "💡", rr.get("tech_narratives",[]), "What new technology could change how '" + rn + "' problems get solved?", '#8B5CF6')
-            + sub_card("Market Size (TAM)", "📊", rr.get("tam",[]), "How large is the '" + rn + "' market? Estimate: # of people × what they'd pay.", '#10B981')
-            + sub_card("Your Personal Experience", "⭐", rr.get("user_challenges",[]), "Which '" + rn + "' problems do YOU personally experience? Rate each 1–5.", cs['dot'])
-            + '</div></div></div>'
+            + '<span class="status-pill">' + status_dot + '</span>'
+            + '</div>'
+            + (('<p class="rc-insight">' + esc(r["how"]) + '</p>') if r.get("how") and not r["how"].startswith("[") else '')
+            + '</div></div>'
+            + '<div class="rc-body">'
+            + takeaway_html
+            + '<div class="rc-details">' + gp_det + wt_det + exp_det + '</div>'
+            + '</div>'
+            + '</div>'
         )
 
     return (
-        '<div class="roles-layout">'
-        + '<div class="roles-sidebar">' + ''.join(pills) + '</div>'
-        + '<div class="roles-detail">' + ''.join(panels) + '</div>'
+        '<div class="tab-section">'
+        + '<div class="roles-grid">' + ''.join(cards) + '</div>'
         + '</div>'
     )
 
+# ── Tab: Network ──────────────────────────────────────────────────────────────
 def tab_network(d):
     contacts = d["network_contacts"]
 
@@ -247,12 +348,13 @@ def tab_network(d):
         does = c.get('What They Do',''); overlap = c.get('Role Overlap','')
         iv = c.get('Interviewed?','No')
         init = (name[0] if name else '?').upper()
-        badge = '<span class="badge badge-green">Interviewed ✓</span>' if str(iv).lower() in ('yes','y','done') else '<span class="badge badge-gray">Not yet</span>'
+        interviewed = str(iv).lower() in ('yes','y','done')
+        badge = ('<span class="badge badge-green">Interviewed ✓</span>' if interviewed else '<span class="badge badge-gray">Not yet</span>')
         role_html = ('<div class="contact-role">' + esc(does) + '</div>') if does and not does.startswith('[') else ''
         known_html = ('<div class="contact-known">' + esc(how) + '</div>') if how and not how.startswith('[') else ''
         overlap_html = ('<div class="contact-overlap">↔ ' + esc(overlap) + '</div>') if overlap and not overlap.startswith('[') else ''
         return (
-            '<div class="contact-card">'
+            '<div class="contact-card' + (' contact-done' if interviewed else '') + '">'
             + '<div class="contact-avatar">' + esc(init) + '</div>'
             + '<div class="contact-info">'
             + '<div class="contact-name">' + esc(name) + '</div>'
@@ -271,23 +373,25 @@ def tab_network(d):
         )
 
     cards = [filled_card(c) for c in contacts]
-    while len(cards) < 5:
-        cards.append(empty_slot(len(cards)+1))
+    while len(cards) < 5: cards.append(empty_slot(len(cards)+1))
+
+    interviewed_count = sum(1 for c in contacts if str(c.get('Interviewed?','')).lower() in ('yes','y','done'))
 
     return (
         '<div class="tab-section">'
-        + '<div class="network-header">'
-        + '<h3>🤝 Your Interview Network</h3>'
-        + '<p>These people can validate your hypothesis — or kill a bad one before you build. Aim for 5+ honest conversations.</p>'
+        + '<div class="card">'
+        + '<h3 class="card-title">🤝 Interview Network <span class="count-chip">' + str(len(contacts)) + ' added · ' + str(interviewed_count) + ' interviewed</span></h3>'
+        + '<p class="card-sub-hint">Each person is a potential customer discovery interview. Aim for 5+ honest conversations.</p>'
         + '</div>'
         + '<div class="contacts-grid">' + ''.join(cards) + '</div>'
         + '</div>'
     )
 
+# ── Tab: Opportunities ────────────────────────────────────────────────────────
 def tab_opps(d):
     problems = d["candidate_problems"]; oq = d["open_questions"]
     if not problems:
-        return '<div class="tab-section"><div class="card">' + pending_card("Opportunity ranking appears here after research + challenge interview phases.", "🚀") + '</div></div>'
+        return '<div class="tab-section"><div class="card">' + empty_state("Opportunity ranking appears here after research + challenge interview phases.") + '</div></div>'
 
     def snum(s):
         try: return int(re.sub(r'[^0-9]','',s.split('/')[0]))
@@ -301,36 +405,57 @@ def tab_opps(d):
         wa = det.get('workaround','')
         sn = snum(score); active = 'active' in status.lower()
         sc = '#16A34A' if sn >= 35 else '#EA580C' if sn >= 20 else '#94A3B8'
+
         score_badge = ('<span class="score-badge" style="color:' + sc + ';border-color:' + sc + '">' + esc(score) + '</span>') if score else ''
         status_badge = '<span class="badge ' + ('badge-green' if active else 'badge-red') + '">' + esc(status) + '</span>'
-        persona_html = ('<p class="problem-detail"><strong>Persona:</strong> ' + esc(persona) + '</p>') if persona and not persona.startswith('[') else ''
-        pain_html = ('<p class="problem-detail"><strong>Pain:</strong> ' + esc(pain) + '</p>') if pain and not pain.startswith('[') else ''
-        wa_html = ('<p class="problem-detail"><strong>Workaround:</strong> ' + esc(wa) + '</p>') if wa and not wa.startswith('[') else ''
+
+        # Always-visible: name + score + top pain
+        summary_html = ''
+        if pain and not pain.startswith('['):
+            summary_html = '<p class="opp-pain">🔥 ' + esc(pain) + '</p>'
+        elif persona and not persona.startswith('['):
+            summary_html = '<p class="opp-pain">' + esc(persona) + '</p>'
+
+        # Expandable: full details
+        full_html = ''
+        if persona and not persona.startswith('['):
+            full_html += '<p class="problem-detail"><strong>Persona:</strong> ' + esc(persona) + '</p>'
+        if pain and not pain.startswith('['):
+            full_html += '<p class="problem-detail"><strong>Pain moment:</strong> ' + esc(pain) + '</p>'
+        if wa and not wa.startswith('['):
+            full_html += '<p class="problem-detail"><strong>Workaround:</strong> ' + esc(wa) + '</p>'
+        detail_det = details_block("Full scoring details", None, full_html or empty_state("Scoring details not yet captured.")) if full_html else ''
+
         cards.append(
             '<div class="problem-card ' + ('problem-eliminated' if not active else '') + '">'
             + '<div class="problem-header">'
             + '<h3 class="problem-name">' + esc(p["name"]) + '</h3>'
             + '<div class="problem-badges">' + score_badge + status_badge + '</div>'
             + '</div>'
-            + persona_html + pain_html + wa_html
+            + summary_html
+            + detail_det
             + '</div>'
         )
 
-    oq_html = ('<div class="card"><h3 class="card-title">❓ Open Questions</h3>' + (blist(oq) or pending_card("Open questions for next session appear here.")) + '</div>') if oq else ''
+    oq_html = ''
+    if oq:
+        oq_html = '<div class="card"><h3 class="card-title">❓ Open Questions</h3>' + blist(oq) + '</div>'
+
     return (
         '<div class="tab-section">'
-        + '<div class="network-header"><h3>🚀 Ranked Opportunities</h3><p>Problems scored across 10 dimensions. Max score: 50/50.</p></div>'
         + '<div class="problems-list">' + ''.join(cards) + '</div>'
-        + oq_html + '</div>'
+        + oq_html
+        + '</div>'
     )
 
+# ── Styles ────────────────────────────────────────────────────────────────────
 CSS = """
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F8FAFC;color:#0F172A;font-size:14px;line-height:1.6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F1F5F9;color:#0F172A;font-size:14px;line-height:1.6}
 .header{background:#fff;border-bottom:1px solid #E2E8F0;padding:14px 28px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .header-title{font-size:17px;font-weight:800}.header-title span{color:#2563EB}
-.header-badges{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid transparent}
+.header-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid transparent}
 .badge-blue{background:#EFF6FF;color:#1E40AF;border-color:#BFDBFE}
 .badge-green{background:#F0FDF4;color:#166534;border-color:#86EFAC}
 .badge-gray{background:#F9FAFB;color:#374151;border-color:#D1D5DB}
@@ -339,58 +464,88 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .tab{padding:11px 18px;cursor:pointer;font-size:13px;font-weight:500;color:#64748B;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s;user-select:none}
 .tab:hover{color:#0F172A}.tab.active{color:#2563EB;border-bottom-color:#2563EB}
 .tab-content{display:none}.tab-content.active{display:block}
-.tab-section{max-width:1080px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:18px}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:650px){.two-col{grid-template-columns:1fr}}
-.card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.card-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.card-sub{font-size:12px;color:#64748B;margin-bottom:12px}
-.count-badge{background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px}
-.pending{background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:9px;padding:14px;display:flex;gap:10px;align-items:flex-start}
-.pending-icon{font-size:16px;flex-shrink:0;line-height:1.4}.pending-text{color:#64748B;font-size:13px;line-height:1.5}
-.blist{padding-left:18px;display:flex;flex-direction:column;gap:4px}.blist li{font-size:13px;color:#334155}
-.profile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.pfield{background:#F8FAFC;border-radius:8px;padding:10px 12px}
-.plabel{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94A3B8;margin-bottom:2px}
-.pval{font-size:14px;font-weight:600;color:#0F172A}
-.mini-roles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
-.mini-role{border:1.5px solid;border-radius:9px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:transform .1s,box-shadow .1s}
-.mini-role:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
-.mini-emoji{font-size:22px;flex-shrink:0}.mini-name{font-size:13px;font-weight:700}.mini-cat{font-size:11px;font-weight:500}
-.roles-layout{display:grid;grid-template-columns:210px 1fr;gap:0;min-height:70vh}
-@media(max-width:750px){.roles-layout{grid-template-columns:1fr}}
-.roles-sidebar{border-right:1px solid #E2E8F0;padding:16px 12px;display:flex;flex-direction:column;gap:5px;position:sticky;top:110px;max-height:calc(100vh - 110px);overflow-y:auto;background:#fff}
-.role-pill{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;border:1px solid var(--cat-bdr,#E2E8F0);font-size:13px;font-weight:500;transition:background .15s;overflow:hidden}
-.role-pill:hover{background:var(--cat-bg,#F8FAFC)}
-.role-pill.pill-active{background:var(--cat-bg,#EFF6FF);border-color:var(--cat-bdr,#93C5FD);color:var(--cat-txt,#1E40AF);font-weight:700}
-.pill-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.roles-detail{padding:20px;background:#F8FAFC}
-.role-panel{background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.rpanel-header{display:flex;align-items:flex-start;gap:14px;padding:20px;border-bottom:1px solid}
-.rpanel-emoji{font-size:40px;line-height:1}.rpanel-name{font-size:20px;font-weight:800;margin-bottom:5px}
-.rpanel-insight{font-size:12px;color:#64748B;margin-top:5px}
-.cat-badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid}
-.rpanel-body{padding:16px}
-.subcards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:700px){.subcards-grid{grid-template-columns:1fr}}
-.sub-card{background:#FAFAFA;border:1px solid #E2E8F0;border-radius:9px;padding:14px}
-.sub-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#475569;margin-bottom:10px}
-.network-header{padding:0 0 8px}.network-header h3{font-size:20px;font-weight:800;margin-bottom:4px}.network-header p{font-size:13px;color:#64748B}
-.contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.contact-card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:16px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.tab-section{max-width:960px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px}
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:20px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card-title{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card-sub-hint{font-size:12px;color:#94A3B8;margin-bottom:10px}
+.count-chip{background:#F1F5F9;color:#64748B;font-size:11px;font-weight:600;padding:1px 7px;border-radius:99px;margin-left:4px}
+.muted-hint{color:#94A3B8;font-size:13px;font-style:italic}
+.blist{padding-left:18px;display:flex;flex-direction:column;gap:4px}.blist li{font-size:13px;color:#334155;line-height:1.5}
+/* Profile bar */
+.profile-bar{font-size:16px;font-weight:600;color:#0F172A;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.prof-sep{color:#CBD5E1;font-weight:300}.prof-icon{margin-right:2px}
+.stats-bar{display:flex;gap:8px;flex-wrap:wrap}
+.stat-chip{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:600;color:#64748B}
+/* Mini roles grid */
+.mini-roles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:12px}
+.mini-role{border:1.5px solid;border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:transform .1s,box-shadow .1s}
+.mini-role:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.mini-emoji{font-size:20px;flex-shrink:0}.mini-name{font-size:13px;font-weight:700}.mini-cat{font-size:11px;font-weight:500}
+/* Details / expandable */
+.detblocks{padding:0;overflow:hidden}
+.det-block{border:none;border-top:1px solid #F1F5F9}
+.det-block:first-child{border-top:none}
+details.det-block summary{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none;user-select:none;background:#fff;transition:background .1s}
+details.det-block summary:hover{background:#F8FAFC}
+details.det-block[open]>summary{background:#F8FAFC;border-bottom:1px solid #E2E8F0}
+details.det-block summary::-webkit-details-marker{display:none}
+.det-label{font-size:13px;font-weight:600;color:#334155;display:flex;align-items:center;gap:6px}
+.det-count{background:#EFF6FF;color:#2563EB;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px}
+.det-arrow{font-size:16px;color:#94A3B8;transition:transform .2s;display:inline-block}
+details.det-block[open] .det-arrow{transform:rotate(90deg)}
+.det-body{padding:16px 20px;background:#fff}
+.det-inner-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94A3B8;margin:14px 0 6px}
+.det-inner-title:first-child{margin-top:0}
+/* Roles grid */
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px}
+@media(max-width:500px){.roles-grid{grid-template-columns:1fr}}
+.role-card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.rc-header{display:flex;align-items:flex-start;gap:12px;padding:16px;border-bottom:1px solid}
+.rc-emoji{font-size:32px;line-height:1;flex-shrink:0}
+.rc-meta{flex:1;min-width:0}
+.rc-name{font-size:16px;font-weight:800;margin-bottom:4px}
+.rc-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.cat-badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid}
+.status-pill{font-size:11px;color:#64748B}
+.rc-insight{font-size:12px;color:#64748B;margin-top:2px}
+.rc-body{padding:0}
+/* Takeaway block */
+.takeaway-block{padding:14px 16px;border-bottom:1px solid #F1F5F9;display:flex;flex-direction:column;gap:6px}
+.takeaway-row{display:flex;align-items:flex-start;gap:8px;font-size:13px}
+.ta-icon{flex-shrink:0;width:18px;text-align:center}
+.ta-label{color:#94A3B8;flex-shrink:0;min-width:70px}
+.ta-val{color:#0F172A;flex:1}
+.ta-pain .ta-val{font-weight:600}
+.rc-details{border-top:1px solid #F1F5F9}
+/* Role details use same det-block style but no border-radius */
+.rc-details .det-block{border-top:1px solid #F1F5F9}
+.rc-details .det-block:first-child{border-top:none}
+.rc-details details.det-block summary{padding:12px 16px}
+.rc-details .det-body{padding:12px 16px}
+/* Network */
+.contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.contact-card{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:14px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .contact-card.contact-empty{border-style:dashed;background:#F8FAFC}
-.contact-avatar{width:44px;height:44px;border-radius:50%;background:#2563EB;color:#fff;font-size:18px;font-weight:800;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.contact-card.contact-done{border-color:#86EFAC;background:#FAFFFE}
+.contact-avatar{width:40px;height:40px;border-radius:50%;background:#2563EB;color:#fff;font-size:16px;font-weight:800;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .contact-avatar-empty{background:#E2E8F0;color:#94A3B8}
-.contact-name{font-size:15px;font-weight:700;margin-bottom:3px}.contact-empty-name{color:#94A3B8}
-.contact-role{font-size:12px;color:#334155;margin-bottom:2px}.contact-known{font-size:11px;color:#94A3B8;font-style:italic;margin-bottom:6px}.contact-overlap{font-size:11px;color:#64748B;margin-bottom:6px}
-.problems-list{display:flex;flex-direction:column;gap:14px}
-.problem-card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.contact-name{font-size:14px;font-weight:700;margin-bottom:2px}.contact-empty-name{color:#94A3B8}
+.contact-role{font-size:12px;color:#334155;margin-bottom:2px}
+.contact-known{font-size:11px;color:#94A3B8;font-style:italic;margin-bottom:4px}
+.contact-overlap{font-size:11px;color:#64748B;margin-bottom:4px}
+/* Opportunities */
+.problems-list{display:flex;flex-direction:column;gap:12px}
+.problem-card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .problem-eliminated{opacity:.5}
-.problem-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
-.problem-name{font-size:16px;font-weight:700}
+.problem-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.problem-name{font-size:15px;font-weight:700}
 .problem-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;flex-shrink:0}
-.score-badge{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:800;border:1.5px solid}
+.score-badge{padding:2px 9px;border-radius:99px;font-size:12px;font-weight:800;border:1.5px solid}
+.opp-pain{font-size:13px;color:#334155;margin-bottom:8px}
 .problem-detail{font-size:13px;color:#64748B;margin-top:5px}.problem-detail strong{color:#334155}
+/* Footer note */
+.doc-footer{text-align:center;padding:24px;color:#CBD5E1;font-size:12px}
+.doc-footer code{background:#F1F5F9;padding:2px 6px;border-radius:4px;font-size:11px;color:#64748B}
 """
 
 JS = """
@@ -400,20 +555,13 @@ function switchTab(name,el){
   document.getElementById('tab-'+name).classList.add('active');
   el.classList.add('active');
 }
-function selectRole(sid){
-  document.querySelectorAll('.role-panel').forEach(p=>p.style.display='none');
-  document.querySelectorAll('.role-pill').forEach(p=>p.classList.remove('pill-active'));
-  const panel=document.getElementById('panel-'+sid);
-  const pill=document.getElementById('pill-'+sid);
-  if(panel)panel.style.display='block';
-  if(pill)pill.classList.add('pill-active');
-}
-function openRole(sid){
+function switchToRoles(sid){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-roles').classList.add('active');
   document.querySelectorAll('.tab')[1].classList.add('active');
-  selectRole(sid);
+  const card = document.getElementById('role-'+sid);
+  if(card){ setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),50); }
 }
 """
 
@@ -426,10 +574,9 @@ def generate_html(d):
     header = (
         '<div class="header">'
         + '<div class="header-title">🔍 Discovery — <span>' + esc(name) + '</span></div>'
-        + '<div class="header-badges">'
+        + '<div class="header-meta">'
         + '<span class="badge badge-blue">v' + esc(meta['version']) + ' · Round ' + esc(meta['round']) + '</span>'
         + '<span class="badge badge-gray">Updated ' + esc(date_str) + '</span>'
-        + '<span class="badge badge-gray">' + str(n_roles) + ' roles · ' + str(n_c) + ' contacts · ' + str(n_o) + ' opps</span>'
         + '</div></div>'
     )
 
@@ -442,9 +589,11 @@ def generate_html(d):
         + '</div>'
     )
 
+    footer = '<div class="doc-footer">Full data, raw research & all questions → <code>~/problem-finder/discovery.md</code></div>'
+
     return (
         '<!DOCTYPE html>\n<html lang="en">\n<head>\n'
-        + '<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+        + '<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1.0">\n'
         + '<title>Discovery — ' + esc(name) + '</title>\n'
         + '<style>\n' + CSS + '\n</style>\n</head>\n<body>\n'
         + header + '\n' + tabs + '\n'
@@ -452,16 +601,17 @@ def generate_html(d):
         + '<div id="tab-roles" class="tab-content">' + tab_roles(d) + '</div>\n'
         + '<div id="tab-network" class="tab-content">' + tab_network(d) + '</div>\n'
         + '<div id="tab-opps" class="tab-content">' + tab_opps(d) + '</div>\n'
+        + footer + '\n'
         + '<script>\n' + JS + '\n</script>\n</body>\n</html>'
     )
 
 def main():
     inp = Path(sys.argv[1]) if len(sys.argv)>1 else Path.home()/"problem-finder"/"discovery.md"
     out = Path(sys.argv[2]) if len(sys.argv)>2 else inp.with_suffix('.html')
-    if not inp.exists(): print("Error: " + str(inp) + " not found", file=sys.stderr); sys.exit(1)
+    if not inp.exists(): print("Error: "+str(inp)+" not found",file=sys.stderr); sys.exit(1)
     text = inp.read_text(encoding='utf-8')
     html = generate_html(parse_document(text))
-    out.write_text(html, encoding='utf-8')
-    print("✓ Rendered → " + str(out))
+    out.write_text(html,encoding='utf-8')
+    print("✓ Rendered → "+str(out))
 
 if __name__=="__main__": main()

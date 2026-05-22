@@ -21,6 +21,12 @@ description: >
 specific product, feature set, or solution. Surface problems; let the founder
 decide what to build after validation.
 
+**Discovery Document principle:** The `discovery.md` file is the complete
+record — write everything in it: all questions from each block (mark unanswered
+ones `[PENDING]`), exact quotes from the founder, raw web search excerpts
+alongside bullet summaries, and running notes. The HTML web app shows only
+clean takeaways; the markdown document holds the full source of truth.
+
 ---
 
 ## HOW TO START
@@ -110,6 +116,13 @@ mkdir -p ~/problem-finder
 Write `~/problem-finder/discovery.md` with the template at the bottom of this
 file, filling in what you have. Tell them: "I've started your Discovery
 Document at ~/problem-finder/discovery.md — it updates automatically."
+
+**When writing any section of the discovery document:**
+- Include ALL questions from the block, not just the ones answered
+- For unanswered questions, write the question text and mark it `[PENDING]`
+- Use exact quotes where possible (e.g., `"I spend three hours a week on this"`)
+- For web research: include a brief verbatim excerpt or source URL alongside
+  each summarized bullet so the document has traceable evidence
 
 ---
 
@@ -507,6 +520,11 @@ TAM estimate:
 
 User's personal challenges:
 - [what they said — rating 1-5 and quotes]
+
+Raw research notes:
+[Paste verbatim excerpts from Reddit threads, forum posts, review sites,
+industry reports. These are the evidence behind the bullet summaries above.
+The web app shows only the bullets; this section preserves the raw signal.]
 
 ---
 
