@@ -24,14 +24,11 @@ decide what to build after validation.
 
 ## HOW TO START
 
-Type `/problem-finder` to begin or resume a session. That's the only command
-needed. The skill will detect where you are in the process automatically.
+Type `/problem-finder` to begin or resume a session.
 
 ---
 
 ## SESSION START — detect state and route
-
-Do these checks in order:
 
 **Check 1 — Existing Discovery Document on disk**
 Use the Read tool to open `~/problem-finder/discovery.md`.
@@ -39,405 +36,449 @@ Use the Read tool to open `~/problem-finder/discovery.md`.
 - If it does not exist or is empty → go to **ROUND 1**
 
 **Check 2 — Document pasted in message**
-If the user's message contains a Discovery Document (look for "DISCOVERY
-DOCUMENT", version number, or candidate problems list) → go to **ROUND N**,
-and save/overwrite `~/problem-finder/discovery.md` with it before proceeding.
+If the user's message contains a Discovery Document → go to **ROUND N**,
+save/overwrite `~/problem-finder/discovery.md` with it before proceeding.
 
 **Default** → **ROUND 1**
 
 ---
 
-## ROUND 1 — First session
+## ROUND 1 — Full founder interview
 
-Jump straight into the interview. No preamble, no explanation of the skill.
-Open with exactly this:
+Open with this, nothing else:
 
-> "Let's find you a problem worth solving. Most people I talk to already have
-> the ingredients — they just haven't looked at themselves the right way yet.
-> I'm going to ask you about your whole life, not just your job. Ready?
+> "Let's map out your whole world — your work, your life, your people, your
+> frustrations. Most founders have more raw material than they realize. I'm
+> going to ask you a lot of questions. Take your time.
 >
-> Start with the basics: what do you do for work, and what have you done
-> before that?"
+> First: how old are you, and where are you based right now?"
 
-Ask all questions below conversationally — one or two at a time, never as a
-numbered list. Listen carefully and follow up on anything specific before
-moving on. Take your time here. The quality of what comes later depends
-entirely on how much you learn now.
+Ask all questions conversationally — two or three at a time, never as a list.
+Follow up on anything interesting before moving on. This interview is the
+foundation of everything — take it seriously.
 
-### Block 1 — Professional identity
+**Create the document skeleton after the first answer:**
+```bash
+mkdir -p ~/problem-finder
+```
+Write `~/problem-finder/discovery.md` with the template at the bottom of this
+file, filling in what you have. Tell them: "I've started your Discovery
+Document at ~/problem-finder/discovery.md — it updates automatically."
 
-- What do you do for work right now? What does a typical day actually look like?
-- How long have you been doing it, and what did you do before?
-- What's the part of your job that most people outside your field don't
-  understand or appreciate?
-- What inefficiencies or broken things do you see in your industry that
-  outsiders would never notice?
-- Have you ever had a moment at work where you thought "why is no one
-  solving this?" — what was it?
+---
 
-### Block 2 — Hidden expertise and reputation
+### BLOCK 1 — Demographics
 
-- What do people ask YOU for help with — colleagues, friends, family? What
-  are you the go-to person for?
+- How old are you?
+- How do you identify gender-wise? (Optional — skip gracefully if they
+  prefer not to answer)
+- Where did you grow up? Where do you live now?
+- How long have you been in your current city?
+
+---
+
+### BLOCK 2 — Education history
+
+- What's your educational background — schools, degrees, what you studied?
+- Were there subjects, projects, or experiences from school that shaped you
+  in ways that still show up in your life today?
+- Did you have any jobs, clubs, or side projects during school that mattered?
+- Is there a field you studied or explored that you walked away from but
+  still think about?
+
+---
+
+### BLOCK 3 — Full work history
+
+- Walk me through your career from the beginning — what have you done, in
+  what order, and for how long?
+- For each significant role: what industry was it, what did you actually do
+  day-to-day, and what broke or frustrated you that others didn't notice?
+- Have you had any freelance, consulting, or side-project work alongside a
+  day job?
+- Any entrepreneurial attempts — even things that didn't go anywhere?
+
+---
+
+### BLOCK 4 — Current role (deep dive)
+
+- What do you do right now, and what does a typical week actually look like?
+- What do you understand about your industry that outsiders would never see?
+- Have you ever had a moment at work where you thought "why does no one
+  solve this?" — what was it?
+- What do you do manually every week at work that should be automated?
+- What's the most painful recurring thing in your current job?
+
+---
+
+### BLOCK 5 — Hidden expertise and reputation
+
+- What do people — colleagues, friends, family — ask YOU for help with?
+  What are you the go-to person for?
 - What's something you know a lot about that most people around you don't?
-- Is there something you've fixed, built, or figured out for yourself that
+- Have you ever fixed, built, or figured out something for yourself that
   others said "you should sell that"?
 - What have you gotten unusually good at just from repetition or necessity?
 
-### Block 3 — Personal identities and life situations
+---
 
-Explain briefly before asking: "Now I want to ask about your personal life —
-because some of the best startup ideas come from markets people are part of
-every day without thinking of themselves as a 'market'."
+### BLOCK 6 — Personal life situations
 
-- Do you have kids? How old? What stage are they at — daycare, school,
-  college, leaving home?
-- Do you have pets? What kind, and how involved are you in their care?
-- Are you a homeowner or renter? How long, and where?
-- Do you help care for elderly or sick parents or family members?
-- Do you have any ongoing health conditions or chronic things you manage —
-  for yourself or someone close to you?
-- Are you part of any religious, cultural, or ethnic community that has its
-  own specific needs or services?
-- Are you an immigrant or expat, or do you work across cultures or languages?
+Brief framing before this block: "Now the personal stuff — some of the
+biggest startup opportunities come from markets people live in every day
+without thinking of themselves as 'a market'."
 
-### Block 4 — Interests, hobbies, and communities
+- Do you have children? How old are they, and what stage of life are they in?
+- Do you have pets? What kind, and how hands-on are you with their care?
+- Are you a homeowner or renter? How long, and what's your situation?
+- Do you help care for elderly or unwell parents or family members? How
+  involved are you?
+- Do you manage any ongoing health conditions — for yourself or someone
+  close to you?
+- Are you part of any religious, cultural, or ethnic community with its own
+  specific traditions, services, or needs?
+- Are you an immigrant or expat, or do you regularly navigate between
+  cultures or languages?
+- Any other life situations that take up significant time or mental energy?
 
-- What do you do outside of work that you're genuinely passionate about?
-  Sports, creative pursuits, volunteering, anything?
+---
+
+### BLOCK 7 — Relationships (how they connect, not just who they know)
+
+- Tell me about your partner or spouse, if you have one — what do they do,
+  and what do they complain about in their work or life?
+- Who are your closest friends — what do they do, and how did you meet?
+- How do you typically keep in touch with close friends — texts, group
+  chats, regular meetups, social media?
+- How often do you actually see the people you care about in person?
+- What do you do together when you get together — shared activities,
+  traditions, routines?
+- Is there anyone in your life who always seems to be dealing with the same
+  recurring problem? What is it?
+- Do you have a parent, sibling, or family member whose job or daily
+  struggles you know well from years of hearing about it?
+
+---
+
+### BLOCK 8 — Hobbies, interests, and communities
+
+- What do you do outside of work that you're genuinely into — sports,
+  creative pursuits, collecting, volunteering, anything?
 - Are you part of any clubs, leagues, associations, or communities —
   online or in person?
 - What do you geek out about? What rabbit holes do you fall into?
 - Is there a subculture or niche world you're deeply embedded in that most
-  people don't know much about?
+  people know nothing about?
+- What would you do with your time if work wasn't a factor?
 
-### Block 5 — Consumer frustrations and spending
+---
 
-- What do you spend money on regularly that you're not happy with — services,
-  subscriptions, products?
-- What's something you pay for where you always feel like it could be so much
-  better?
-- What's the last thing you searched "is there an app for..." and couldn't
-  find a good answer?
-- What industry have you been a customer in long enough that you see all its
-  flaws clearly?
+### BLOCK 9 — Consumer frustrations and spending
 
-### Block 6 — Problems they're already living with
+- What do you spend money on regularly that you're genuinely not happy with?
+- What subscriptions or services do you pay for where you always feel like
+  it could be so much better?
+- What's the last time you searched "is there an app for..." and didn't find
+  a good answer?
+- Which industry have you been a customer in long enough that you see all
+  its flaws clearly?
 
-- What do you do manually every week that should be automatic but isn't?
-- What's something in your life or work you've rigged together with a
-  spreadsheet, a workaround, or sheer force of habit because no good tool exists?
-- What do you complain about repeatedly to friends or your partner?
-- What's the most recent thing you tried to fix or improve — in your life or
-  work — and couldn't find a satisfying solution for?
-- Is there anything you're actively trying to solve right now, even informally?
+---
 
-### Block 7 — Identity reflection (do this before moving to research)
+### BLOCK 10 — Problems they're already living with
 
-Before proceeding, reflect back everything you've heard. Name every market and
-identity the founder represents — they may not see themselves this way. Frame
-it like this:
+- What do you do manually every week — in life, not just work — that should
+  be automatic but isn't?
+- What have you rigged together with a spreadsheet, a workaround, or sheer
+  habit because no good solution exists?
+- What do you complain about repeatedly to your partner, friends, or family?
+- What's something you've been meaning to fix or improve in your life for
+  months and still haven't?
+- Is there anything you're actively trying to solve right now, even
+  informally?
 
-> "Before we start researching, I want to show you something. Based on what
-> you've told me, you're not just a [job title]. You're also:
-> — A [pet owner / parent of a toddler / caregiver / renter / chronic
->   condition manager / amateur athlete / member of X community / etc.]
+---
+
+### BLOCK 11 — Identity reflection
+
+Before moving to research, reflect everything back. Build the full Roles
+List from what you've heard. Frame it like this:
+
+> "Before we research anything, I want to show you what you've just
+> described. You're not just a [job title]. You're also:
 >
-> Each of these is a real market full of real problems. We're going to look at
-> all of them, not just your professional world."
+> [List every role/identity — use the format below]
+>
+> Each of these is a real market with real problems. We're going to look at
+> all of them."
 
-List every identity you identified. Ask: "Does anything on that list
-surprise you? Is there anything I missed?"
+List roles in this format — name every identity, no matter how small:
 
-### Block 8 — Resources and constraints
+| Role | Category | What it gives you |
+|------|----------|------------------|
+| Software Engineer | Professional | Insider view of dev tooling pain |
+| Mountain Biker | Hobby | Deep user of trail/gear ecosystem |
+| Renter in SF | Life | First-hand experience of rental friction |
+| Son with aging parents | Family | Proximity to eldercare market |
+| Friend coordinator | Social | Organizes group activities, feels the friction |
 
-- How much time can you put into this — nights and weekends, or are you
-  thinking full-time?
+Then ask: "Does anything on that list surprise you? Did I miss anything?"
+
+---
+
+### BLOCK 12 — Resources and constraints
+
+- How much time can you realistically put into this?
 - Can you build things yourself, or would you need a technical co-founder?
-- Do you have any savings or runway to work with?
+- Do you have any savings or runway?
 - Are there industries you'd rather avoid — for ethical, personal, or
   practical reasons?
 - Are you thinking about a small profitable business, or something that
-  could scale big?
+  could grow big?
 
-### Block 9 — Network (last in Session 1)
+---
 
-- Across all the identities and worlds we've talked about — professional,
-  personal, community — who do you know well enough that they'd take a
-  30-minute honest call with you?
-- Who in your life complains about their work or a recurring problem the most?
-- Is there anyone you know who's really deep in one of the industries or
-  communities we talked about — someone who would give you the unfiltered truth?
+### BLOCK 13 — Network (last in Session 1)
 
-**After completing all blocks:** tell them "Good — let me research the most
-promising areas now" and proceed to Step 2. The areas to research should span
-both their professional world AND their personal identities where you spotted
-the strongest pain signals.
+- Across all the worlds we've talked about — professional, personal,
+  community — who do you know well enough that they'd take an honest
+  30-minute call with you?
+- Who in your life complains most about their work or a recurring problem?
+- Is there anyone you know who's really deep in one of these areas and
+  would give you the unfiltered truth?
 
-**Create the document skeleton immediately** after the first exchange:
-```bash
-mkdir -p ~/problem-finder
-```
-Then use the Write tool to create `~/problem-finder/discovery.md` with the
-template at the bottom of this file, filling in what you know so far.
-Tell the founder: "I've created your Discovery Document at
-~/problem-finder/discovery.md — it will update automatically as we go."
+---
 
-### Step 2 — Web research (MANDATORY)
+## AFTER THE INTERVIEW — Research and challenge discovery
 
-For each industry the founder mentioned, run live web searches.
-Do not rely on training knowledge alone.
+### Step 2 — Research every role
 
-**If web search is available:** Run it. See `references/industry-workflow.md`
-for queries to use. Run at least 5 searches per industry.
+For each role in the Roles List, run web searches to find:
+- **Goals:** What are people in this role trying to achieve?
+- **Success definition:** What does winning look like for them?
+- **Pain points:** What do they report struggling with most? (Search
+  Reddit, forums, reviews, surveys)
 
-**If web search is unavailable:** Ask: "I don't have web access right now —
-should I proceed using my training knowledge (I'll flag anything unverified),
-or pause until I can search?" Mark unverified claims as ⚠ Unverified.
-
-Load `references/industry-workflow.md` for research approach.
+Load `references/industry-workflow.md` for search query templates.
 Load `references/pain-extraction.md` for what counts as real pain.
-Load `references/tech-behavioral-trends.md` for relevant tech/behavioral waves.
 
-**After research completes:** update `~/problem-finder/discovery.md` — fill in
-the Industry Landscape sections using the Edit tool.
+Run at least 3 searches per role. Update `~/problem-finder/discovery.md`
+with a ROLE RESEARCH section for each role after it's done.
 
-### Step 3 — Network mapping
+Tell the founder: "Researching your [N] roles — this will take a few
+minutes."
 
-Load `references/network-mapping.md`. Score each contact (max 25).
-Update `~/problem-finder/discovery.md` with the network map table.
+---
 
-### Step 4 — Candidate problems
+### Step 3 — Per-role challenge interview
 
-Load `references/anti-patterns.md` — filter out non-starters immediately.
-Load `references/incumbent-risk.md` — assess each surviving candidate.
+After research is complete, go through each researched role with the
+founder. For each one:
 
-For each real candidate: name the exact persona, the exact pain moment, the
-current workaround, and why the workaround fails.
+> "For your role as [Role Name], research shows people typically struggle
+> with: [list top 3–5 pain points from research].
+>
+> Which of these do you personally experience? Rate each 1–5 (1 = not
+> really, 5 = this is my life). And is there anything I missed?"
 
-Update `~/problem-finder/discovery.md` with Candidate Problems section.
+Capture their ratings and any challenges they add. Update the discovery
+document with USER CHALLENGES for each role.
 
-### Step 5 — Opportunity ranking
+---
 
-Load `references/opportunity-ranking.md`. Score each candidate (max 50).
-Eliminate anything below 25. Show the scoring breakdown.
+### Step 4 — Anti-pattern filter and opportunity scoring
 
-Update `~/problem-finder/discovery.md` with scores.
+Load `references/anti-patterns.md`.
+Load `references/opportunity-ranking.md`.
+Load `references/incumbent-risk.md`.
 
-### Step 6 — Interview scripts
+Score the top candidate problems across all roles. Show scores and reasoning.
+Update discovery document with CANDIDATE PROBLEMS section.
 
-Load `references/interview-scripts.md`. Generate one tailored script per top
-network contact.
+---
 
-Update `~/problem-finder/discovery.md` with Interview Scripts section.
+### Step 5 — Generate HTML viewer
 
-### Step 7 — Final save and close
-
-Write the complete, final Discovery Document to `~/problem-finder/discovery.md`
-using the Write tool (full overwrite with all sections complete).
+Run the render script to generate the visual discovery document:
+```bash
+python3 ~/problem-finder/scripts/render.py ~/problem-finder/discovery.md ~/problem-finder/discovery.html
+open ~/problem-finder/discovery.html
+```
 
 Tell the founder:
-> "Your Discovery Document is saved at ~/problem-finder/discovery.md.
+> "Your Discovery Document is open in your browser at
+> ~/problem-finder/discovery.html. It updates every session.
 >
-> Next step: do the interviews using the scripts above. When you're back,
-> just type /problem-finder — I'll load your document automatically and
-> pick up where we left off."
+> Next step: do the interviews using the scripts. When you're back, type
+> /problem-finder — I'll load your document automatically."
 
 ---
 
 ## ROUND N — Returning founder
 
-The file at `~/problem-finder/discovery.md` was read at session start (or the
-founder pasted their document). Do NOT restart the interview.
+Read `~/problem-finder/discovery.md` at session start. Do NOT restart.
 
-### Step 1 — Check what the founder brought back
+Process interview notes → update rankings → surface WTP signals →
+re-run render script → save v(N) document.
 
-Did they share interview notes in this message? If yes, extract:
-- Confirmed pain moments (specifics: duration, frequency)
-- Workarounds observed or described
-- Willingness-to-pay signals (direct quotes)
-- Financial loss or risk data ($amounts)
-- Referrals to new contacts
-- Any new candidate problems surfaced
-
-If they typed `/problem-finder` with no new data, ask:
-> "Welcome back. Do you have interview notes to share, or would you like to
-> review where you left off?"
-
-### Step 2 — Validate with additional research
-
-Run web searches to corroborate or challenge what the interviews revealed.
-Especially: competitor pricing, community complaints matching interview pain,
-market size signals.
-
-### Step 3 — Re-rank candidates
-
-Update each score based on new evidence. Show what changed and why.
-Elevate candidates with multiple confirming interviews; downgrade those
-with no support.
-
-### Step 4 — Surface WTP signals explicitly
-
-Call out every willingness-to-pay signal. Note whether prompted or unprompted.
-Separate personal WTP from organizational budget WTP.
-
-### Step 5 — Save updated document
-
-Increment the version number. Update all sections with new data.
-Overwrite `~/problem-finder/discovery.md` with the complete v(N) document.
-
-Tell the founder what changed and what to do next.
+Load `references/network-mapping.md` for scoring contacts.
+Load `references/interview-scripts.md` for interview frameworks.
 
 ---
 
 ## FINAL ROUND — One problem clearly leads
 
-When one problem has 3+ confirming interviews, strong WTP signals, and clear
-incumbent gap:
+Load `references/competitor-research.md`.
+Load `references/validation-playbook.md`.
+Load `references/distribution-mapping.md`.
 
-Load `references/competitor-research.md` — run deep competitor research.
-Load `references/validation-playbook.md` — produce a step-by-step validation plan.
-Load `references/distribution-mapping.md` — map where to find more customers.
-
-Save the complete document with Competitor Research and Validation Plan filled in.
+Run render script when done to update the HTML viewer.
 
 ---
 
 ## DISCOVERY DOCUMENT TEMPLATE
 
 ```
-═══════════════════════════════════════════════════════════
-DISCOVERY DOCUMENT
-Version: [N] | Round: [N/3] | Date: [today]
-Saved: ~/problem-finder/discovery.md
-═══════════════════════════════════════════════════════════
-
-## FOUNDER PROFILE
-
-### Professional
-Current role: [title, industry, how long]
-Past roles: [previous careers or industries]
-Insider knowledge: [what they understand deeply that outsiders miss]
-Hidden expertise: [what people ask them for help with]
-Built or hacked: [things they've rigged together or fixed themselves]
-
-### Personal identities and life situations
-[List every identity uncovered — check all that apply and add detail]
-- Parent: [kids' ages/stages]
-- Pet owner: [type, involvement level]
-- Homeowner / Renter: [how long, context]
-- Caregiver: [who, situation]
-- Chronic condition manager: [self or family member]
-- Religious/cultural community: [which, how involved]
-- Immigrant/expat: [context]
-- Other: [anything else]
-
-### Interests, hobbies, communities
-[What they do outside work, clubs/leagues/associations, obsessions, subcultures]
-
-### Consumer frustrations
-[What they pay for and hate, searches for "is there an app for X", industries they know as a flawed customer]
-
-### Problems they're already solving
-[Manual workarounds, spreadsheets, repeated complaints, active unsolved problems]
-
-### Markets they represent
-[Full list of every market/identity the founder belongs to — professional + personal]
-
-### Resources and constraints
-Technical ability: [can build / needs co-founder / no-code only]
-Time available: [hours/week or full-time]
-Runway/budget: [savings, timeline]
-Industries to avoid: [ethical, personal, practical reasons]
-Scale goal: [lifestyle / venture]
-
-### Network map
-| Role | What they do | Score /25 | Why interesting |
-|------|-------------|-----------|-----------------|
-
-TOP INTERVIEW TARGETS: [ordered list with rationale]
+# DISCOVERY DOCUMENT
+version: 1 | date: [today] | round: 1
 
 ---
 
-## INDUSTRY LANDSCAPE
+## PROFILE
 
-### [Industry Name]
-Goals: [what people in this industry are trying to achieve]
-Economic structure: [how they make money, what KPIs they have]
-Typical workflows: [the actual repeating steps]
-Tool stack: [what software they pay for today]
-Workarounds: [manual steps, spreadsheets, hacks they use]
-Recent shifts: [what changed in the last 2 years]
-Pain signals (from live web research): [bullet list with sources]
-Incumbent gap: [what existing tools don't cover and why]
+name:
+age:
+gender:
+location_current:
+location_grew_up:
+
+---
+
+## EDUCATION
+
+[bullet list: institution, field, years, notable experiences]
+
+---
+
+## WORK HISTORY
+
+[bullet list: role, company, industry, years, key observations]
+
+---
+
+## RELATIONSHIPS
+
+partner: [name/occupation or none]
+close_friends:
+- [name, what they do, how you stay in touch, how often you see them]
+family_nearby:
+- [who, situation, how often you interact]
+how_they_connect: [group chat / meetups / calls / social media]
+notable: [anyone whose recurring problem you notice clearly]
+
+---
+
+## HOBBIES AND INTERESTS
+
+[bullet list: activity, depth of involvement, any communities]
+
+---
+
+## CONSUMER FRUSTRATIONS
+
+[bullet list: what they pay for and hate, "no app for X" searches]
+
+---
+
+## ACTIVE PROBLEMS
+
+[bullet list: manual workarounds, repeated complaints, unsolved things]
+
+---
+
+## ROLES LIST
+
+| Role | Category | Emoji | How Identified |
+|------|----------|-------|----------------|
+| [role] | professional/hobby/life/family/social | [emoji] | [how] |
+
+---
+
+## ROLE RESEARCH
+
+### [Role Name]
+Category: [professional/hobby/life/family/social]
+Research status: [pending/done]
+
+Goals:
+- [what people in this role are trying to achieve]
+
+Success looks like:
+- [what winning feels like for people in this role]
+
+Pain points (from web research):
+- [specific pain with source]
+- [specific pain with source]
+
+Current solutions:
+- [tool/approach + its gap]
+
+User's personal challenges:
+- [what they said — rating and quotes]
+
+---
+
+## TECH BREAKTHROUGHS
+
+[What became newly possible in last 2 years — relevant to the roles above]
+- [breakthrough]: applies to [role(s)]
 
 ---
 
 ## CANDIDATE PROBLEMS
 
-### Problem N: [Name]
-Persona: [exact role, company size, tool stack]
-Exact pain moment: [what breaks, when, how often]
-Current workaround: [what they do instead]
-Why workaround fails: [cost in time/money/risk]
-Frequency: [daily/weekly/monthly]
-Emotional weight: [low/medium/high + why]
-Financial weight: [dollars at stake]
-Incumbent risk: [LOW/MEDIUM/HIGH + reasoning]
-Opportunity score: [X/50]
-
-Scoring breakdown:
-[10 dimensions, 1–5 each, from opportunity-ranking.md]
-
-Status: ACTIVE / ELIMINATED [reason if eliminated]
-Anti-pattern check: [confirm it clears the 10 filters]
-
----
-
-## TREND OVERLAYS
-[Which tech/behavioral waves apply to each candidate]
+### Problem [N]: [Name]
+Persona: [role + company size + context]
+Pain moment: [exactly what breaks]
+Workaround: [what they do instead]
+Score: [X/50]
+Status: ACTIVE / ELIMINATED
 
 ---
 
 ## INTERVIEW SCRIPTS
-[One script per top network contact]
+
+[One per top network contact — see references/interview-scripts.md]
 
 ---
 
 ## INTERVIEW DATA
-[Round 1: empty. Round N+: structured notes from each interview]
 
-### Interview [N] — [Name, Role, Company size]
-Duration: [X min] | How you know them: [context]
-Key pain moments: [bullet list — exact quotes where possible]
-Workarounds observed: [what you saw or they described]
-WTP signals: [direct quotes, prompted or unprompted]
-Referrals: [who they mentioned]
-Confidence this pain is real: [1–5]
+[Populated in Round N+]
 
 ---
 
 ## INSIGHTS ACROSS INTERVIEWS
-[Patterns appearing in 2+ interviews — fill in after Round 2+]
+
+[Populated in Round N+]
 
 ---
 
 ## COMPETITOR RESEARCH
+
 [Final round only]
 
 ---
 
 ## VALIDATION PLAN
+
 [Final round only]
 
 ---
 
 ## OPEN QUESTIONS
-[Specific things to investigate in next interview round]
 
-═══════════════════════════════════════════════════════════
-END OF DISCOVERY DOCUMENT v[N]
-Next step: [specific action]
-Resume: type /problem-finder in a new session — document loads automatically
-═══════════════════════════════════════════════════════════
+[Things to investigate next]
+
+# END OF DISCOVERY DOCUMENT
 ```
