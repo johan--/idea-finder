@@ -14,7 +14,7 @@ from pathlib import Path
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 DEFAULT_INPUT  = Path.home() / "problem-finder" / "discovery.md"
-DEFAULT_OUTPUT = Path("/Users/evgeny/Downloads/self profile/data.jsx")
+DEFAULT_OUTPUT = Path(__file__).parent.parent / "ui" / "data.jsx"
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def safe_id(s):

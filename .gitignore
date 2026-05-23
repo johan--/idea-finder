@@ -2,6 +2,9 @@
 discovery.md
 discovery.html
 
+# Generated output — personal data, rebuilt by render.py
+ui/data.jsx
+
 # Claude Code local config
 .claude/
 
