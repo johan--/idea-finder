@@ -6,12 +6,40 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "showHints": true
 }/*EDITMODE-END*/;
 
+// Persist answers to localStorage and POST each new answer to the server so
+// it is appended to discovery.md under ## QUESTION ANSWERS.
+const LS_KEY = "self-map-answers";
+
+function loadAnswers() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); }
+  catch { return {}; }
+}
+
+function persistAnswer(roleId, idx, text) {
+  const role = ROLES.find((r) => r.id === roleId);
+  if (!role) return;
+  fetch("/save-answer", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      roleLabel: role.label,
+      question:  role.openQuestions[idx],
+      answer:    text,
+    }),
+  }).catch((err) => console.warn("save-answer:", err));
+}
+
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [tab, setTab] = React.useState("map");          // map | network | opportunities | questions
   const [selectedId, setSelectedId] = React.useState(null);
-  const [answers, setAnswers] = React.useState({});     // { questionKey: { kind:'answer'|'skip', text? } }
+  const [answers, setAnswers] = React.useState(loadAnswers); // { questionKey: { kind:'answer'|'skip', text? } }
   const [docOpen, setDocOpen] = React.useState(false);
+
+  // Mirror answers to localStorage whenever they change.
+  React.useEffect(() => {
+    localStorage.setItem(LS_KEY, JSON.stringify(answers));
+  }, [answers]);
 
   // Apply tone to <html> so the CSS variable set switches.
   React.useEffect(() => {
@@ -123,9 +151,12 @@ function App() {
           <QuestionsTab
             roles={ROLES}
             answers={answers}
-            onAnswer={(k, text) =>
-              setAnswers((prev) => ({ ...prev, [k]: { kind: "answer", text } }))
-            }
+            onAnswer={(k, text) => {
+              setAnswers((prev) => ({ ...prev, [k]: { kind: "answer", text } }));
+              // k is "${roleId}-${idx}" — decode and ship to server
+              const dash = k.lastIndexOf("-");
+              persistAnswer(k.slice(0, dash), parseInt(k.slice(dash + 1), 10), text);
+            }}
             onSkip={(k) =>
               setAnswers((prev) => ({ ...prev, [k]: { kind: "skip" } }))
             }
