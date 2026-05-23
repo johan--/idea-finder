@@ -245,22 +245,6 @@ def _parse_landscape(landscape, d):
         d["role_research"][rname] = rd
 
 
-# ── Orbit / angle assignment ──────────────────────────────────────────────────
-ORBIT_1_CATS = {'professional', 'life', 'health'}
-
-def assign_positions(roles):
-    orbit1 = [r for r in roles if r['category'].lower().split('/')[0].strip() in ORBIT_1_CATS]
-    orbit2 = [r for r in roles if r['category'].lower().split('/')[0].strip() not in ORBIT_1_CATS]
-    pos = {}
-    n1 = max(len(orbit1), 1)
-    for i, r in enumerate(orbit1):
-        pos[r['name']] = {'orbit': 1, 'angle': round((90 + i * 360 / n1) % 360)}
-    n2 = max(len(orbit2), 1)
-    for i, r in enumerate(orbit2):
-        pos[r['name']] = {'orbit': 2, 'angle': round((30 + i * 360 / n2) % 360)}
-    return pos
-
-
 # ── Data mapping ──────────────────────────────────────────────────────────────
 def build_persona(d):
     p = d["profile"]
@@ -289,13 +273,11 @@ def build_persona(d):
 def build_roles(d):
     roles = d["roles"]
     research = d["role_research"]
-    positions = assign_positions(roles)
     out = []
 
     for r in roles:
         rname = r['name']
         rr = research.get(rname, {})
-        pos = positions.get(rname, {'orbit': 2, 'angle': 0})
 
         # goal: goals + success joined into one paragraph
         goal = " ".join(rr.get("goals", []) + rr.get("success", []))
@@ -336,8 +318,6 @@ def build_roles(d):
             "label":         rname,
             "shortLabel":    short,
             "sublabel":      r.get("how", ""),
-            "angle":         pos["angle"],
-            "orbit":         pos["orbit"],
             "intensity":     intensity,
             "goal":          goal,
             "practice":      practice,
@@ -401,7 +381,6 @@ def build_network(d, role_ids):
             "id":           safe_id(name),
             "name":         name,
             "relation":     c.get("How You Know Them", "").strip(),
-            "distance":     1,
             "roles":        [does] if does and not does.startswith('[') else [],
             "overlapsWith": overlap_ids,
             "note":         note,
@@ -447,8 +426,6 @@ def generate_data_jsx(d, raw_text):
         L.append(f"    label: {js_str(r['label'])},")
         L.append(f"    shortLabel: {js_str(r['shortLabel'])},")
         L.append(f"    sublabel: {js_str(r['sublabel'])},")
-        L.append(f"    angle: {r['angle']},")
-        L.append(f"    orbit: {r['orbit']},")
         L.append(f"    intensity: {js_str(r['intensity'])},")
         L.append(f"    goal: {js_str(r['goal'])},")
         L.append(f"    practice: {str_list(r['practice'])},")
@@ -475,7 +452,6 @@ def generate_data_jsx(d, raw_text):
         L.append(f"    id: {js_str(c['id'])},")
         L.append(f"    name: {js_str(c['name'])},")
         L.append(f"    relation: {js_str(c['relation'])},")
-        L.append(f"    distance: {c['distance']},")
         L.append(f"    roles: {str_list(c['roles'])},")
         if c['overlapsWith']:
             L.append(f"    overlapsWith: [{', '.join(js_str(x) for x in c['overlapsWith'])}],")
