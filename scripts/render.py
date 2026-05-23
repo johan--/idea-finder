@@ -345,6 +345,31 @@ def build_roles(d):
             "narratives":    narratives,
             "openQuestions": open_qs,
         })
+
+    # Distribute flat ## OPEN QUESTIONS to roles by keyword affinity.
+    # Only runs when per-role open_questions are all empty (old doc format).
+    if out and not any(r["openQuestions"] for r in out):
+        flat_qs = d.get("open_questions", [])
+        if flat_qs:
+            ROLE_KWS = {
+                r["id"]: set(
+                    re.sub(r"[^a-z0-9 ]", " ",
+                           (r["label"] + " " + r.get("sublabel", "")).lower()).split()
+                )
+                for r in out
+            }
+            for q in flat_qs:
+                q_lower = q.lower()
+                best_id, best_score = out[0]["id"], 0
+                for rid, kws in ROLE_KWS.items():
+                    score = sum(1 for kw in kws if len(kw) > 3 and kw in q_lower)
+                    if score > best_score:
+                        best_id, best_score = rid, score
+                for role_obj in out:
+                    if role_obj["id"] == best_id:
+                        role_obj["openQuestions"].append(q)
+                        break
+
     return out
 
 

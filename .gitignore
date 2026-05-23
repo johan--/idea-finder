@@ -1,0 +1,12 @@
+# Personal discovery data — never commit
+discovery.md
+discovery.html
+
+# Claude Code local config
+.claude/
+
+# Python cache
+scripts/__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
