@@ -16,42 +16,6 @@ function NetworkTab({ persona, network, roles, onSelectRole }) {
         </p>
       </header>
 
-      <div className="network-rings">
-        <svg className="network-rings-svg" viewBox="-300 -300 600 600" aria-hidden="true">
-          <circle cx="0" cy="0" r="140" />
-          <circle cx="0" cy="0" r="240" />
-        </svg>
-        <div className="network-self">
-          <div className="network-self-name">{persona.name}</div>
-        </div>
-        {network.map((f, i) => {
-          const n = network.length;
-          const sameRing = network.filter((g) => g.distance === f.distance);
-          const idxInRing = sameRing.indexOf(f);
-          const totalInRing = sameRing.length;
-          // Spread evenly within each ring, starting 18° up so it doesn't look
-          // axis-aligned.
-          const angle = idxInRing / totalInRing * 360 + 18;
-          const radius = f.distance === 1 ? 140 : 240;
-          const rad = angle * Math.PI / 180;
-          const x = Math.cos(rad) * radius;
-          const y = -Math.sin(rad) * radius;
-          return (
-            <button
-              key={f.id}
-              className="network-node"
-              style={{ left: `calc(50% + ${x}px)`, top: `calc(50% + ${y}px)` }}
-              onMouseEnter={(e) => e.currentTarget.classList.add("is-hover")}
-              onMouseLeave={(e) => e.currentTarget.classList.remove("is-hover")}>
-              
-              <span className="network-node-dot" aria-hidden="true" />
-              <span className="network-node-name">{f.name}</span>
-              <span className="network-node-rel">{f.relation}</span>
-            </button>);
-
-        })}
-      </div>
-
       <ol className="network-list">
         {network.map((f) =>
         <li key={f.id} className="network-row">
