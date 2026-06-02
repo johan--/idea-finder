@@ -1,6 +1,6 @@
-# Idea Finder — Co-Founder Discovery Agent
+# Idea Finder — Self Discovery Agent
 
-> A Claude Code skill that helps you systematically find the right problem to build a company around — before you write a line of code.
+> A Claude Code skill that helps you systematically find the right problem to build a company around — before you commit your time and money.
 
 ---
 
