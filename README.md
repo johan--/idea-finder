@@ -146,7 +146,7 @@ Type `/render` at any point during discovery and Claude will run the render scri
 
 The interface is designed to pull you back in — to make what you've uncovered feel real and navigable, so the next dig feels obvious rather than overwhelming:
 
-- **Self-map** — your roles laid out as an orbital map. Each ring, each node is something real about you — a market you already live in. Click any role to see its problems, workarounds, and open questions up close.
+- **Self-map** — a table of every role you inhabit, each one a market you already live in. Click any role to open its detailed view: the problems people in that role face, how they're currently solving them, and where the opportunities are. A starting point for the next dig, not a summary of the last one.
 - **Opportunities** — every candidate problem surfaced from your roles, paired with the narrative trends moving through that space. Not a to-do list — a lens for spotting where a real problem and a real moment in time are looking at each other.
 - **Network** — your close circle, mapped to the roles they touch. Your next interview target is usually visible from here.
 - **Open questions** — the things you said but didn't finish. Answer one. Set one aside. Let them sit. All of them are useful eventually.
