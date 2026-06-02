@@ -1,5 +1,5 @@
 ---
-name: problem-finder
+name: idea-finder
 description: >
   Co-Founder Discovery Agent — helps entrepreneurs systematically find narrow,
   recurring, painful, underserved operational problems worth building a company
@@ -10,7 +10,7 @@ description: >
   should I build?", "I want to be an entrepreneur but don't know where to
   start", "I'm exploring startup ideas", or "I have X background and Y network
   — help me find a problem." Trigger even if the user hasn't used the word
-  "skill" or "problem-finder." Available commands — /problem-finder: start or
+  "skill" or "idea-finder." Available commands — /idea-finder: start or
   resume a discovery session; /dig [role]: go deeper on a specific role;
   /validate [problem]: turn a problem into a testable hypothesis with a Reddit
   post and interview script; /interview [contact]: generate a tailored interview
@@ -23,7 +23,7 @@ description: >
   brief for advisors or co-founders; /next: single most valuable next action.
 ---
 
-# Problem Finder — Co-Founder Discovery Agent
+# Idea Finder — Co-Founder Discovery Agent
 
 **Core principle:** Stay problem-focused at all times. Never prescribe a
 specific product, feature set, or solution. Surface problems; let the founder
@@ -39,7 +39,7 @@ clean takeaways; the markdown document holds the full source of truth.
 
 ## HOW TO START
 
-Type `/problem-finder` to begin or resume a discovery session.
+Type `/idea-finder` to begin or resume a discovery session.
 
 Type `/dig [role]` at any point — mid-interview, after research, or in a later
 session — to go deeper on a specific role and surface sharper problems,
@@ -50,13 +50,13 @@ workarounds, and willingness-to-pay signals.
 ## SESSION START — detect state and route
 
 **Check 1 — Existing Discovery Document on disk**
-Use the Read tool to open `~/problem-finder/discovery.md`.
+Use the Read tool to open `~/idea-finder/discovery.md`.
 - If it exists and has content → read it silently, then go to **ROUND N**
 - If it does not exist or is empty → go to **ROUND 1**
 
 **Check 2 — Document pasted in message**
 If the user's message contains a Discovery Document → go to **ROUND N**,
-save/overwrite `~/problem-finder/discovery.md` with it before proceeding.
+save/overwrite `~/idea-finder/discovery.md` with it before proceeding.
 
 **Default** → **ROUND 1**
 
@@ -97,7 +97,7 @@ depth to an existing role and updates the discovery document.
 
 4. **Re-render** — run the render script to update the self-map visualization:
    ```bash
-   python3 ~/problem-finder/scripts/render.py
+   python3 ~/idea-finder/scripts/render.py
    ```
 
 ---
@@ -417,13 +417,13 @@ foundation of everything — take it seriously.
 
 **Create the document skeleton after the first answer:**
 ```bash
-mkdir -p ~/problem-finder
+mkdir -p ~/idea-finder
 ```
-Write `~/problem-finder/discovery.md` with the template at the bottom of this
+Write `~/idea-finder/discovery.md` with the template at the bottom of this
 file, filling in what you have. Then run the render script to generate the
 initial self-map:
 ```bash
-python3 ~/problem-finder/scripts/render.py
+python3 ~/idea-finder/scripts/render.py
 ```
 Tell them: "I've started your Discovery Document and your self-map is live —
 open **http://localhost:3737** in your browser. It updates automatically after
@@ -632,7 +632,7 @@ they mentioned], old colleagues, family members with interesting jobs."
 
 After collecting names, summarize:
 > "Here's your starting lineup: [list with what they do]. These are your
-> first interview targets. Type /problem-finder next session and I'll
+> first interview targets. Type /idea-finder next session and I'll
 > load your document with interview scripts ready."
 
 ---
@@ -658,7 +658,7 @@ For each role in the Roles List, run web searches to find all six dimensions:
 Load `references/industry-workflow.md` for search query templates.
 Load `references/pain-extraction.md` for what counts as real pain.
 
-Run at least 3 searches per role. Update `~/problem-finder/discovery.md`
+Run at least 3 searches per role. Update `~/idea-finder/discovery.md`
 with a ROLE RESEARCH section for each role covering all six dimensions.
 
 Tell the founder: "Researching your [N] roles — this will take a few
@@ -697,7 +697,7 @@ Update discovery document with CANDIDATE PROBLEMS section.
 
 Run the render script to update the visual self-map:
 ```bash
-python3 ~/problem-finder/scripts/render.py
+python3 ~/idea-finder/scripts/render.py
 ```
 
 Tell the founder:
@@ -705,17 +705,17 @@ Tell the founder:
 > and opportunities laid out visually.
 >
 > Next step: use the Network tab to find your first interview targets. When
-> you're back, type /problem-finder — I'll load your document automatically.
+> you're back, type /idea-finder — I'll load your document automatically.
 > Type /dig [role] anytime to go deeper on any specific role."
 
 ---
 
 ## ROUND N — Returning founder
 
-Read `~/problem-finder/discovery.md` at session start. Do NOT restart.
+Read `~/idea-finder/discovery.md` at session start. Do NOT restart.
 
 Process interview notes → update rankings → surface WTP signals →
-re-run `python3 ~/problem-finder/scripts/render.py` → save v(N) document.
+re-run `python3 ~/idea-finder/scripts/render.py` → save v(N) document.
 
 Load `references/network-mapping.md` for scoring contacts.
 Load `references/interview-scripts.md` for interview frameworks.
@@ -728,7 +728,7 @@ Load `references/competitor-research.md`.
 Load `references/validation-playbook.md`.
 Load `references/distribution-mapping.md`.
 
-Run `python3 ~/problem-finder/scripts/render.py` when done to update the self-map.
+Run `python3 ~/idea-finder/scripts/render.py` when done to update the self-map.
 
 ---
 

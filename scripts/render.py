@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Problem Finder — Discovery Document → data.jsx
+Idea Finder — Discovery Document → data.jsx
 Reads discovery.md, maps it to the self-map React UI schema, and writes
 data.jsx to the design folder so the website loads with real data.
 
@@ -13,7 +13,7 @@ import sys, re, json
 from pathlib import Path
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
-DEFAULT_INPUT  = Path.home() / "problem-finder" / "discovery.md"
+DEFAULT_INPUT  = Path.home() / "idea-finder" / "discovery.md"
 DEFAULT_OUTPUT = Path(__file__).parent.parent / "ui" / "data.jsx"
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

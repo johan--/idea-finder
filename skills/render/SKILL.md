@@ -11,7 +11,7 @@ description: >
 ## Step 1 — Rebuild data.jsx
 
 ```bash
-python3 ~/problem-finder/scripts/render.py
+python3 ~/idea-finder/scripts/render.py
 ```
 
 If this fails, show the error and stop.
@@ -27,7 +27,7 @@ lsof -ti :3737
 If nothing is returned, start it in the background:
 
 ```bash
-python3 ~/problem-finder/scripts/serve.py &
+python3 ~/idea-finder/scripts/serve.py &
 ```
 
 Wait 1 second, then confirm it started by checking the port again.

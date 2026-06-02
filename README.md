@@ -1,4 +1,4 @@
-# Problem Finder — Co-Founder Discovery Agent
+# Idea Finder — Co-Founder Discovery Agent
 
 > A Claude Code skill that helps you systematically find the right problem to build a company around — before you write a line of code.
 
@@ -18,7 +18,7 @@ That's what this skill does.
 
 ## What it does
 
-Problem Finder is a Claude Code skill that acts as a co-founder discovery agent. It interviews you about your life and expertise, researches every role you inhabit as a potential market, scores the opportunities it finds, and helps you validate the strongest ones before you commit.
+Idea Finder is a Claude Code skill that acts as a co-founder discovery agent. It interviews you about your life and expertise, researches every role you inhabit as a potential market, scores the opportunities it finds, and helps you validate the strongest ones before you commit.
 
 It keeps a running `discovery.md` — your complete discovery record — and renders it as a visual self-map you can explore in a browser.
 
@@ -30,7 +30,7 @@ The skill knows when to push, when to go deeper, and when to tell you a problem 
 
 ### Session 1 — The interview
 
-You type `/problem-finder`. The skill interviews you across 13 structured blocks: your career history, your daily frustrations, your hobbies and communities, your personal life situations, and — critically — the specific people in your network.
+You type `/idea-finder`. The skill interviews you across 13 structured blocks: your career history, your daily frustrations, your hobbies and communities, your personal life situations, and — critically — the specific people in your network.
 
 By the end, you have a **Roles List**: every identity you inhabit (software engineer, homeowner, immigrant, mountain biker, parent) treated as a potential market.
 
@@ -52,16 +52,16 @@ A ranked list of candidate problems scored on pain intensity, frequency, willing
 
 ```bash
 # Clone the repo
-git clone git@github.com:zhenya-vlasov/problem-finder.git ~/problem-finder
+git clone git@github.com:zhenya-vlasov/idea-finder.git ~/idea-finder
 
 # Symlink as a Claude Code skill
-ln -s ~/problem-finder ~/.claude/skills/problem-finder
+ln -s ~/idea-finder ~/.claude/skills/idea-finder
 
 # Symlink the render helper skill
-ln -s ~/problem-finder/skills/render ~/.claude/skills/render
+ln -s ~/idea-finder/skills/render ~/.claude/skills/render
 ```
 
-Open Claude Code and type `/problem-finder` to begin.
+Open Claude Code and type `/idea-finder` to begin.
 
 ---
 
@@ -69,7 +69,7 @@ Open Claude Code and type `/problem-finder` to begin.
 
 | Command | What it does |
 |---|---|
-| `/problem-finder` | Start or resume a discovery session. Loads your existing `discovery.md` automatically on return visits. |
+| `/idea-finder` | Start or resume a discovery session. Loads your existing `discovery.md` automatically on return visits. |
 | `/dig [role]` | Zoom in on a specific role. Asks 8 sharper questions: exact break moments, cost estimates, workaround details, willingness-to-pay signals. |
 | `/validate [problem]` | Turn a candidate problem into a testable hypothesis. Produces a Reddit post you can publish today, a 5-question interview script, and a list of yes/no signals to watch for. |
 | `/interview [contact]` | Generate a tailored interview script for a specific person in your network. Paste in your notes afterward and it structures them back into your discovery document. |
@@ -88,7 +88,7 @@ Open Claude Code and type `/problem-finder` to begin.
 ## Session flow
 
 ```
-/problem-finder
+/idea-finder
       │
       ▼
   Session 1 — Interview (13 blocks) + Roles List
@@ -97,7 +97,7 @@ Open Claude Code and type `/problem-finder` to begin.
   Research — web search for each role (pain, workarounds, TAM, incumbents)
       │
       ▼
-  Discovery document saved → ~/problem-finder/discovery.md
+  Discovery document saved → ~/idea-finder/discovery.md
       │
       ├── /dig [role]       ← go deeper on any role
       ├── /market [role]    ← competitive research
@@ -122,7 +122,7 @@ Open Claude Code and type `/problem-finder` to begin.
 
 ## The discovery document
 
-Everything is stored in `~/problem-finder/discovery.md` — a single structured markdown file that accumulates across sessions:
+Everything is stored in `~/idea-finder/discovery.md` — a single structured markdown file that accumulates across sessions:
 
 - Your complete profile and background
 - Full Roles List with categories and how each role was identified
@@ -132,7 +132,7 @@ Everything is stored in `~/problem-finder/discovery.md` — a single structured 
 - Candidate problems with scores and evidence
 - Validation plans and open questions
 
-Run `python3 ~/problem-finder/scripts/render.py` at any point to update the visual self-map.
+Run `python3 ~/idea-finder/scripts/render.py` at any point to update the visual self-map.
 
 ---
 
@@ -150,7 +150,7 @@ The self-map is a visual browser interface showing:
 ## What's inside
 
 ```
-problem-finder/
+idea-finder/
 ├── SKILL.md                      # Main skill — all commands
 ├── skills/
 │   └── render/SKILL.md           # /render helper skill

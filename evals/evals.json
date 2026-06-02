@@ -1,5 +1,5 @@
 {
-  "skill_name": "problem-finder",
+  "skill_name": "idea-finder",
   "evals": [
     {
       "id": 1,
@@ -15,7 +15,7 @@
     },
     {
       "id": 3,
-      "prompt": "Round 2: founder returns with interview notes. No pasted document — skill should auto-load ~/problem-finder/discovery.md from disk.",
+      "prompt": "Round 2: founder returns with interview notes. No pasted document — skill should auto-load ~/idea-finder/discovery.md from disk.",
       "expected_output": "Skill reads existing discovery.md from disk, processes interview data, updates rankings, surfaces WTP signals, incorporates financial loss data, saves updated v2 document.",
       "files": []
     }
