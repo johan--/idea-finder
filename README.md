@@ -56,6 +56,9 @@ git clone git@github.com:zhenya-vlasov/problem-finder.git ~/problem-finder
 
 # Symlink as a Claude Code skill
 ln -s ~/problem-finder ~/.claude/skills/problem-finder
+
+# Symlink the render helper skill
+ln -s ~/problem-finder/skills/render ~/.claude/skills/render
 ```
 
 Open Claude Code and type `/problem-finder` to begin.
@@ -78,6 +81,7 @@ Open Claude Code and type `/problem-finder` to begin.
 | `/why-me [problem]` | Honest, scored assessment of your unfair advantage — or lack of one — for a specific problem. |
 | `/brief` | One-page founder brief synthesized from your full discovery document. Ready to share with an advisor, co-founder, or early investor. |
 | `/next` | Single most valuable next action, based on exactly where you are in the discovery process right now. |
+| `/render` | Rebuild the Self-Map web app from your current `discovery.md`. Runs `render.py` and tells you to refresh the browser. |
 
 ---
 
@@ -148,8 +152,11 @@ The self-map is a visual browser interface showing:
 ```
 problem-finder/
 ├── SKILL.md                      # Main skill — all commands
+├── skills/
+│   └── render/SKILL.md           # /render helper skill
 ├── scripts/
-│   └── render.py                 # discovery.md → visual self-map
+│   ├── render.py                 # discovery.md → visual self-map
+│   └── serve.py                  # local dev server with answer persistence
 ├── references/
 │   ├── industry-workflow.md      # Search queries and research workflows
 │   ├── pain-extraction.md        # What counts as real pain signal
