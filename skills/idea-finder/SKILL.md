@@ -655,8 +655,8 @@ For each role in the Roles List, run web searches to find all six dimensions:
 - **TAM estimate:** How large is this market? (search "[role] market size",
   "[industry] TAM"; or calculate: # people in this role × what they'd pay)
 
-Load `references/industry-workflow.md` for search query templates.
-Load `references/pain-extraction.md` for what counts as real pain.
+Load `../../references/industry-workflow.md` for search query templates.
+Load `../../references/pain-extraction.md` for what counts as real pain.
 
 Run at least 3 searches per role. Update `~/idea-finder/discovery.md`
 with a ROLE RESEARCH section for each role covering all six dimensions.
@@ -684,9 +684,9 @@ document with USER CHALLENGES for each role.
 
 ### Step 4 — Anti-pattern filter and opportunity scoring
 
-Load `references/anti-patterns.md`.
-Load `references/opportunity-ranking.md`.
-Load `references/incumbent-risk.md`.
+Load `../../references/anti-patterns.md`.
+Load `../../references/opportunity-ranking.md`.
+Load `../../references/incumbent-risk.md`.
 
 Score the top candidate problems across all roles. Show scores and reasoning.
 Update discovery document with CANDIDATE PROBLEMS section.
@@ -717,16 +717,16 @@ Read `~/idea-finder/discovery.md` at session start. Do NOT restart.
 Process interview notes → update rankings → surface WTP signals →
 re-run `python3 ~/idea-finder/scripts/render.py` → save v(N) document.
 
-Load `references/network-mapping.md` for scoring contacts.
-Load `references/interview-scripts.md` for interview frameworks.
+Load `../../references/network-mapping.md` for scoring contacts.
+Load `../../references/interview-scripts.md` for interview frameworks.
 
 ---
 
 ## FINAL ROUND — One problem clearly leads
 
-Load `references/competitor-research.md`.
-Load `references/validation-playbook.md`.
-Load `references/distribution-mapping.md`.
+Load `../../references/competitor-research.md`.
+Load `../../references/validation-playbook.md`.
+Load `../../references/distribution-mapping.md`.
 
 Run `python3 ~/idea-finder/scripts/render.py` when done to update the self-map.
 
@@ -867,7 +867,7 @@ Status: ACTIVE / ELIMINATED
 
 ## INTERVIEW SCRIPTS
 
-[One per top network contact — see references/interview-scripts.md]
+[One per top network contact — see ../../references/interview-scripts.md]
 
 ---
 

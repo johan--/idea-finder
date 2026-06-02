@@ -1,0 +1,11 @@
+{
+  "name": "idea-finder",
+  "description": "Co-founder discovery agent — systematically find problems worth building a company around using your background, expertise, and network.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Evgeny Vlasov"
+  },
+  "homepage": "https://github.com/zhenya-vlasov/idea-finder",
+  "repository": "https://github.com/zhenya-vlasov/idea-finder",
+  "license": "MIT"
+}

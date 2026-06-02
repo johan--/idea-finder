@@ -50,14 +50,18 @@ A ranked list of candidate problems scored on pain intensity, frequency, willing
 
 ## Installation
 
+**Via Claude Code plugin install (recommended):**
+```bash
+claude plugin install github.com/zhenya-vlasov/idea-finder
+```
+
+**Or manually:**
 ```bash
 # Clone the repo
 git clone git@github.com:zhenya-vlasov/idea-finder.git ~/idea-finder
 
-# Symlink as a Claude Code skill
-ln -s ~/idea-finder ~/.claude/skills/idea-finder
-
-# Symlink the render helper skill
+# Symlink the main skill and render helper
+ln -s ~/idea-finder/skills/idea-finder ~/.claude/skills/idea-finder
 ln -s ~/idea-finder/skills/render ~/.claude/skills/render
 ```
 
