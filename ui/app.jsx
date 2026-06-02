@@ -87,6 +87,7 @@ function App() {
     { key: "network", label: "Network", count: NETWORK.length },
     { key: "opportunities", label: "Opportunities" },
     { key: "questions", label: "Open questions", count: openQuestionCount },
+    { key: "discovery", label: "Full discovery doc" },
   ];
 
   return (
@@ -162,6 +163,10 @@ function App() {
             }
             accent={accent}
           />
+        )}
+
+        {tab === "discovery" && (
+          <DiscoveryDocTab persona={PERSONA} doc={DISCOVERY_DOC} />
         )}
       </main>
 

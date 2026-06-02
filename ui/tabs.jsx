@@ -301,6 +301,33 @@ function QuestionItem({ q, onAnswer, onSkip, accent }) {
 
 }
 
+/* ── DISCOVERY DOC TAB ──────────────────────────────────────────────────── */
+
+function DiscoveryDocTab({ persona, doc }) {
+  return (
+    <div className="tab-wrap discovery">
+      <header className="tab-head">
+        <div className="tab-eyebrow">05 / Full discovery doc</div>
+        <h2 className="tab-title" style={{ fontFamily: "Times" }}>
+          The interview the map was built from
+        </h2>
+        <div className="docmodal-meta" style={{ marginTop: 12 }}>
+          <span>{persona.name}</span>
+          <span aria-hidden="true">·</span>
+          <span>{persona.interviewedOn}</span>
+          <span aria-hidden="true">·</span>
+          <span>{persona.interviewLength}</span>
+        </div>
+        <p className="tab-lede" style={{ marginTop: 16 }}>
+          Raw — every question asked, every note taken, research pasted in full.
+          The visual map shows only the clean takeaways; this is the source of truth.
+        </p>
+      </header>
+      <pre className="docmodal-body" style={{ padding: 0 }}>{doc}</pre>
+    </div>
+  );
+}
+
 /* ── DISCOVERY DOC VIEWER (modal, opened from Tweaks) ───────────────────── */
 
 function DiscoveryDoc({ open, onClose, persona, doc }) {
@@ -333,4 +360,4 @@ function DiscoveryDoc({ open, onClose, persona, doc }) {
 
 }
 
-Object.assign(window, { NetworkTab, OpportunitiesTab, QuestionsTab, DiscoveryDoc });
+Object.assign(window, { NetworkTab, OpportunitiesTab, QuestionsTab, DiscoveryDoc, DiscoveryDocTab });

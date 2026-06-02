@@ -420,8 +420,14 @@ foundation of everything — take it seriously.
 mkdir -p ~/problem-finder
 ```
 Write `~/problem-finder/discovery.md` with the template at the bottom of this
-file, filling in what you have. Tell them: "I've started your Discovery
-Document at ~/problem-finder/discovery.md — it updates automatically."
+file, filling in what you have. Then run the render script to generate the
+initial self-map:
+```bash
+python3 ~/problem-finder/scripts/render.py
+```
+Tell them: "I've started your Discovery Document and your self-map is live —
+open **http://localhost:3737** in your browser. It updates automatically after
+each session."
 
 **When writing any section of the discovery document:**
 - Include ALL questions from the block, not just the ones answered
