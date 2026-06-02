@@ -10,9 +10,17 @@ description: >
   should I build?", "I want to be an entrepreneur but don't know where to
   start", "I'm exploring startup ideas", or "I have X background and Y network
   — help me find a problem." Trigger even if the user hasn't used the word
-  "skill" or "problem-finder." Invoke with /problem-finder to start or resume a
-  discovery session. Invoke with /dig or /dig [role] to go deeper on a specific
-  role at any time.
+  "skill" or "problem-finder." Available commands — /problem-finder: start or
+  resume a discovery session; /dig [role]: go deeper on a specific role;
+  /validate [problem]: turn a problem into a testable hypothesis with a Reddit
+  post and interview script; /interview [contact]: generate a tailored interview
+  script for a network contact and process their notes; /sim [problem]: roleplay
+  a skeptical customer conversation with debrief; /market [role]: deep
+  competitive and market research; /persona [role]: write a vivid day-in-the-
+  life customer persona; /score: rank all candidate problems on a consistent
+  rubric; /compare [A] vs [B]: head-to-head comparison of two problems;
+  /why-me [problem]: founder-market fit assessment; /brief: one-page founder
+  brief for advisors or co-founders; /next: single most valuable next action.
 ---
 
 # Problem Finder — Co-Founder Discovery Agent
@@ -87,11 +95,309 @@ depth to an existing role and updates the discovery document.
    RESEARCH section: workarounds, tech narratives, TAM estimate, user
    challenges with ratings.
 
-4. **Re-render** — run the render script to update the HTML web app:
+4. **Re-render** — run the render script to update the self-map visualization:
    ```bash
-   python3 ~/problem-finder/scripts/render.py ~/problem-finder/discovery.md ~/problem-finder/discovery.html
-   open ~/problem-finder/discovery.html
+   python3 ~/problem-finder/scripts/render.py
    ```
+
+---
+
+## VALIDATE COMMAND — /validate [problem]
+
+**Trigger:** user types `/validate`, `/validate [problem name]`, "validate this problem", "how do I know this is real", "test this idea", "should I pursue this"
+
+Turn a candidate problem into a testable hypothesis. Produces three things: a Reddit/forum post the founder can post *today*, a five-question interview script for a potential customer, and a list of concrete yes/no signals to watch for over the next two weeks.
+
+**Steps:**
+
+1. **Identify the problem** — if not specified, show CANDIDATE PROBLEMS from the discovery document and ask which to validate. If no discovery document exists, ask them to describe the problem in one sentence.
+
+2. **Sharpen the hypothesis** — ask:
+   - "Who specifically has this problem? (industry, role, company size)"
+   - "What does the bad outcome look like when this problem hits?"
+   - "What are they doing right now instead of your solution?"
+   
+   Then write the hypothesis: "We believe [persona] experiences [problem] when [trigger situation], causing [bad outcome]. They currently use [workaround] which fails because [reason]. A better solution would be worth [rough price] to them."
+
+3. **Write the Reddit / forum post** — a genuine question or "looking for advice" post they can drop into the most relevant community today. Not a pitch. Frame it as someone who has the problem themselves or is researching it with curiosity, not as a founder selling something.
+
+4. **Write the interview script** — five questions designed to produce a real signal, not confirmation:
+   - "Walk me through the last time [trigger situation] happened."
+   - "What did you do to handle it? What tools or people were involved?"
+   - "What did it cost you — time, money, stress?"
+   - "Have you looked for a better solution? What did you find?"
+   - "If I showed you something that fixed this in [time frame], what would it have to cost to be worth trying?"
+
+5. **List the yes/no signals** — specific things to watch for that confirm or kill the hypothesis. "Three people in the thread describe the same workaround without prompting" is a yes. "No one engages or comments say 'just use X'" is a no.
+
+6. **Update the discovery document** — add or update the VALIDATION PLAN section for this problem.
+
+---
+
+## INTERVIEW COMMAND — /interview [contact]
+
+**Trigger:** user types `/interview`, `/interview [name]`, "prep for interview with [name]", "I'm about to talk to [contact]", "help me interview [name]", "I'm meeting with [name]"
+
+Generates a tailored customer interview script for a specific network contact. After the call, processes their notes or transcript into the discovery document.
+
+**Steps:**
+
+1. **Find the contact** — pull from NETWORK CONTACTS in the discovery document. If not found, ask for: name, what they do, which of the founder's roles they overlap with, and any known complaints or context.
+
+2. **Generate the interview script** — 7–10 questions tailored to this person's role and what problems they're likely to see. Lead with rapport, then problems, then depth. Never ask leading questions — the goal is to hear their words, not confirm yours.
+   - "Tell me what a typical [day/week] looks like in your [role]."
+   - "What's the thing you complain about most in [role]?"
+   - "Walk me through the last time that happened — exactly what broke?"
+   - "How much time or money does this cost you, roughly?"
+   - "What do you do today to handle it? What's still annoying about that?"
+   - "Have you ever searched for a better way? What did you find?"
+   - "Who else you know deals with this exact thing?"
+   - "Is there anything I should have asked that I didn't?"
+
+3. **Format the script** — ready to print or reference on-screen. Include a blank notes field under each question.
+
+4. **After the call — process notes** — if the user pastes in notes or a transcript:
+   - Extract: pain points mentioned, severity signals (time/money estimates), workarounds described, other names mentioned, any willingness-to-pay signals
+   - Update: INTERVIEW DATA section in the discovery document with a structured summary
+   - Flag: any signal that significantly raises or lowers a candidate problem's score
+   - Suggest: one follow-up question to send as a message if something critical was missed
+
+---
+
+## SIM COMMAND — /sim [problem]
+
+**Trigger:** user types `/sim`, `/sim [problem]`, "simulate a customer conversation", "be a skeptical customer", "practice my pitch", "challenge me on [problem]", "play devil's advocate"
+
+Claude plays a skeptical potential customer. The founder must convince Claude the problem is real and painful — without pitching a solution. After the roleplay, Claude breaks character and gives a structured debrief.
+
+**Steps:**
+
+1. **Set up the sim** — identify the problem (from CANDIDATE PROBLEMS or user description). Play the most skeptical version of the target persona: someone who has the problem, thinks it's manageable, and is not actively looking for a solution.
+
+2. **Stay in character** — push back on vague answers. Say things like:
+   - "I mean, it's annoying, but I just [workaround] and it's fine."
+   - "We tried a tool for that. Nobody used it after two weeks."
+   - "How is this different from just [obvious alternative]?"
+   - "I don't really see this as something I'd pay for."
+   Give the founder 5–8 exchanges to win you over — or not.
+
+3. **Break character — debrief** — rate the session on four dimensions (1–5 each):
+   - **Problem clarity:** Could the founder describe the pain crisply without jargon?
+   - **Evidence:** Did they use real examples, numbers, or quotes from real people?
+   - **Skeptic response:** Did they address pushback directly or deflect?
+   - **WTP signal:** Did a realistic price point emerge naturally?
+   
+   Close with: "Here's what landed well. Here's where you lost me. Here's the one thing to sharpen before your next real conversation."
+
+---
+
+## MARKET COMMAND — /market [role]
+
+**Trigger:** user types `/market`, `/market [role]`, "research the market for [role]", "how big is the [role] market", "find competitors for [role]", "who's building for [role]"
+
+Deep competitive and market research for a specific role. This is the thorough version — not the quick scan from the initial interview, but a proper look at who's already in the space and where the gaps are.
+
+**Steps:**
+
+1. **Identify the role** — from the Roles List or user input.
+
+2. **Run targeted web searches — at minimum:**
+   - "[role] market size 2024" / "[industry] TAM"
+   - "[role] startup funding 2023 2024" / "Y Combinator [role]"
+   - "reddit [role] biggest frustrations OR problems"
+   - "[role] software tools" / "best [role] app"
+   - "[specific pain from research] startup OR company"
+   - "[pain] alternatives" OR "[pain] software review site:reddit.com"
+
+3. **Map the competitive landscape:**
+   - Incumbents: established companies, how long they've existed, rough scale
+   - Startups: who's raised money, what they're building, what stage they're at
+   - DIY: spreadsheets, manual processes, cobbled-together workflows people use instead
+   - Adjacent: tools from neighboring markets that people repurpose for this problem
+
+4. **Identify whitespace** — what pains exist that none of the above solve well? What segments are underserved? What's too small for a large company to care about but large enough to support a startup?
+
+5. **Update the discovery document** — add or update ROLE RESEARCH with: revised TAM, competitive landscape, whitespace analysis, and a plain-language verdict: "This market has/doesn't have room for a startup that does X."
+
+---
+
+## PERSONA COMMAND — /persona [role]
+
+**Trigger:** user types `/persona`, `/persona [role]`, "build a persona for [role]", "who is my customer for [role]", "day in the life of [role]", "describe a [role] customer"
+
+Creates a vivid "day in the life" customer persona for a specific role — the kind you'd put on a wall and ask "would this person pay for this?" Not a demographic table. A story.
+
+**Steps:**
+
+1. **Identify the role** — from the Roles List or user input.
+
+2. **Synthesize what you know** — pull from:
+   - The founder's personal experience in this role (if applicable)
+   - ROLE RESEARCH pain points and workarounds
+   - INTERVIEW DATA from anyone who fills this role
+   - Web research and forum findings
+
+3. **Write the persona** — structured as a narrative:
+   - **Who they are:** Name, age, job title, company type, city. One specific detail that makes them feel real.
+   - **Their Monday morning:** What do they do first thing? What do they dread? What tool do they open?
+   - **The moment it breaks:** Exactly when the core problem hits — what triggers it, what they feel, what they do next.
+   - **Their workaround:** What they do right now, step by step, including the part that's still frustrating.
+   - **What they'd say to a friend:** One sentence describing the problem in their own words — the way they'd complain about it at dinner, not the way a PM would write it in a brief.
+   - **What they've tried:** Solutions they looked at and why they didn't stick.
+   - **What winning looks like:** What does their Tuesday look like if the problem is solved?
+   - **What they'd pay:** Anchored to something real — "they spend $X/month on [comparable thing]."
+
+4. **Update the discovery document** — add the persona to the relevant ROLE RESEARCH section.
+
+---
+
+## SCORE COMMAND — /score
+
+**Trigger:** user types `/score`, "score my problems", "rank the opportunities", "which problem should I focus on", "what's the best opportunity", "compare all my problems"
+
+Runs all CANDIDATE PROBLEMS through a consistent scoring rubric and produces a ranked list with reasoning. The goal is not to pick a winner — it's to show which dimensions are strong and which need more evidence before you can trust them.
+
+**Rubric (10 points each, 50 total):**
+
+1. **Pain intensity (0–10):** How severe is the problem for the person experiencing it? Evidence: language they use, workarounds they've built, time/money estimates.
+2. **Frequency (0–10):** How often does this problem occur? Daily = 9–10. Weekly = 6–7. Monthly = 3–4. Annually = 1–2.
+3. **Willingness to pay (0–10):** Has anyone expressed price anchors? Is there an existing spend category this would replace? 0 = pure speculation. 10 = someone asked "when can I buy this?"
+4. **Founder fit (0–10):** Does the founder have personal experience, domain knowledge, or network access that gives them a real edge here?
+5. **Market accessibility (0–10):** Can the founder reach 10 paying customers this month using only their current network and communities — no cold email, no ads?
+
+**Output format for each problem:**
+
+```
+Problem: [Name]
+Pain intensity:       [X/10] — [one-line reason with evidence]
+Frequency:            [X/10] — [one-line reason]
+Willingness to pay:   [X/10] — [one-line reason]
+Founder fit:          [X/10] — [one-line reason]
+Market accessibility: [X/10] — [one-line reason]
+Total: [X/50]
+Evidence gaps: [what's missing before you can trust this score]
+```
+
+After all scores: name the problem with the strongest case and why. Name the one that needs the most evidence before it's worth pursuing.
+
+Update CANDIDATE PROBLEMS in the discovery document with scores and evidence gaps.
+
+---
+
+## COMPARE COMMAND — /compare [problem A] vs [problem B]
+
+**Trigger:** user types `/compare`, `/compare [A] vs [B]`, "compare [A] and [B]", "which is better — [A] or [B]", "should I focus on [A] or [B]"
+
+Head-to-head structured comparison of two candidate problems. Goes deeper than /score — surfaces the qualitative trade-offs that a number doesn't capture.
+
+**Steps:**
+
+1. **Identify the two problems** — from CANDIDATE PROBLEMS, or user description.
+
+2. **Run the comparison on six dimensions:**
+
+   | Dimension | Problem A | Problem B |
+   |-----------|-----------|-----------|
+   | Score (from rubric) | X/50 | X/50 |
+   | Best-case outcome | [what a win looks like] | [what a win looks like] |
+   | Biggest risk | [what could kill this] | [what could kill this] |
+   | Time to first revenue | [estimate] | [estimate] |
+   | Path to first 10 customers | [specific channel or person] | [specific channel or person] |
+   | Why this founder specifically | [unfair advantage] | [unfair advantage] |
+
+3. **Give a clear recommendation** — don't hedge. State which problem to pursue and why, in two sentences. If you genuinely can't recommend without more information, name the single piece of information that would resolve the tie and how to get it.
+
+4. **Update the discovery document** — note the comparison and recommendation in CANDIDATE PROBLEMS.
+
+---
+
+## WHY-ME COMMAND — /why-me [problem]
+
+**Trigger:** user types `/why-me`, `/why-me [problem]`, "why am I the right person for this", "do I have founder-market fit", "is this the right problem for me", "should I be the one to build this"
+
+A clear-eyed assessment of the founder's specific edge — or lack of one — for a given problem. No cheerleading. The goal is to surface a real unfair advantage or identify exactly what's missing and how to close the gap.
+
+**Steps:**
+
+1. **Identify the problem** — from CANDIDATE PROBLEMS or user description.
+
+2. **Score founder-market fit across five axes (0–5 each):**
+   - **Domain expertise (0–5):** Do you understand this problem from the inside? Worked in the space, experienced the pain directly, or built adjacent solutions?
+   - **Network access (0–5):** Can you get in front of 20 target customers this month without cold outreach? Do you know them by name?
+   - **Credibility signal (0–5):** Would a potential customer take your call because of *who you are or what you've built* — not just because you asked nicely?
+   - **Build advantage (0–5):** Do you have technical, operational, or domain knowledge that would take a competitor months to replicate?
+   - **Obsession signal (0–5):** Have you thought about, complained about, or tried to solve this problem for years — not just noticed it recently?
+
+3. **Write the honest verdict:**
+   - Total score and what it means (0–10: weak fit, 11–17: moderate, 18–25: strong)
+   - Your two or three strongest edges — stated specifically and concretely
+   - Your biggest gap — stated honestly, without softening
+   - "The thing that would make you clearly the right founder for this is [X]. Here's how you could get there."
+
+4. **Update the discovery document** — add WHY ME to the relevant CANDIDATE PROBLEMS entry.
+
+---
+
+## BRIEF COMMAND — /brief
+
+**Trigger:** user types `/brief`, "write a founder brief", "one-pager for my advisor", "summarize where I am", "prepare something to share with a co-founder", "I have a meeting with an investor"
+
+Produces a clean, one-page founder brief summarizing the current state of the discovery. Designed to share with an advisor, potential co-founder, or early investor. Write it as if the founder is the author — direct, confident, no hedging.
+
+**Output structure:**
+
+```
+FOUNDER BRIEF — [Date]
+[Founder name] · [Location] · [Background in one line]
+
+THE PROBLEM
+[2–3 sentences: who has it, when it hits, what it costs them in specific terms]
+
+WHY NOW
+[1–2 sentences: what changed recently — technology, regulation, behavior —
+ that makes this a better time to solve it than five years ago]
+
+WHY ME
+[2–3 sentences: specific unfair advantages — years of experience, domain knowledge,
+ network relationships, or personal experience with the pain]
+
+WHAT I'VE LEARNED
+[3–5 bullet points: the most important signals from interviews, research, and testing so far]
+
+WHAT I'M DOING NEXT
+[2–3 sentences: the next concrete steps — interviews to run, experiments to run,
+ hypotheses to test]
+
+WHAT I NEED
+[1–2 sentences: what kind of help would move this forward fastest —
+ a specific type of co-founder, an advisor in X domain, a warm intro to Y]
+
+Contact: [email or preferred contact]
+```
+
+Synthesize from the full discovery document. A reader should know in 60 seconds whether this is worth a coffee conversation.
+
+---
+
+## NEXT COMMAND — /next
+
+**Trigger:** user types `/next`, "what should I do next", "what's my next step", "where do I go from here", "I don't know what to do now", "what's most important right now"
+
+Reads the current state of the discovery document and outputs exactly ONE recommended next action. Not a list of options — one specific, concrete thing to do in the next 48 hours that will move the discovery forward most.
+
+**Decision logic — pick the first that applies:**
+
+- No roles researched yet → "Run /market [highest-potential role] to understand what you're stepping into."
+- Roles researched but no candidate problems identified → "Run /score to see which signals are strongest across your roles."
+- Candidate problems exist but no validation attempted → "Run /validate [top-scoring problem] to turn your best hypothesis into something testable today."
+- Validation started but no interviews done → "Run /interview [most relevant contact] and book the call this week."
+- Interviews done but no willingness-to-pay signal → "Run /sim [problem] to sharpen how you talk about the pain before your next real conversation."
+- WTP signal exists → "Write /brief and share it with one potential advisor or co-founder this week."
+- One problem clearly dominates → "Commit to it. Design the smallest possible paid experiment — what could someone pay for, even informally, this month?"
+
+Output: one action, stated clearly. Why this action and not another. What a good outcome looks like. What to do if the action produces no useful signal.
+
+Update the discovery document — add the recommendation to OPEN QUESTIONS or a new NEXT ACTIONS section.
 
 ---
 
@@ -381,20 +687,19 @@ Update discovery document with CANDIDATE PROBLEMS section.
 
 ---
 
-### Step 5 — Generate HTML viewer
+### Step 5 — Render the self-map
 
-Run the render script to generate the visual discovery document:
+Run the render script to update the visual self-map:
 ```bash
-python3 ~/problem-finder/scripts/render.py ~/problem-finder/discovery.md ~/problem-finder/discovery.html
-open ~/problem-finder/discovery.html
+python3 ~/problem-finder/scripts/render.py
 ```
 
 Tell the founder:
-> "Your Discovery Document is open in your browser at
-> ~/problem-finder/discovery.html. It updates every session.
+> "Your Self-Map has been updated — open it in your browser to see your roles
+> and opportunities laid out visually.
 >
-> Next step: use your Network tab to run interviews. When you're back,
-> type /problem-finder — I'll load your document automatically.
+> Next step: use the Network tab to find your first interview targets. When
+> you're back, type /problem-finder — I'll load your document automatically.
 > Type /dig [role] anytime to go deeper on any specific role."
 
 ---
@@ -404,7 +709,7 @@ Tell the founder:
 Read `~/problem-finder/discovery.md` at session start. Do NOT restart.
 
 Process interview notes → update rankings → surface WTP signals →
-re-run render script → save v(N) document.
+re-run `python3 ~/problem-finder/scripts/render.py` → save v(N) document.
 
 Load `references/network-mapping.md` for scoring contacts.
 Load `references/interview-scripts.md` for interview frameworks.
@@ -417,7 +722,7 @@ Load `references/competitor-research.md`.
 Load `references/validation-playbook.md`.
 Load `references/distribution-mapping.md`.
 
-Run render script when done to update the HTML viewer.
+Run `python3 ~/problem-finder/scripts/render.py` when done to update the self-map.
 
 ---
 
