@@ -8,10 +8,30 @@ description: >
 
 # Render
 
-Run this command:
+## Step 1 — Rebuild data.jsx
 
 ```bash
 python3 ~/problem-finder/scripts/render.py
 ```
 
-Report the output to the user. If it succeeds, tell them to refresh the browser at http://localhost:3737/Self-Map.html. If it fails, show the error.
+If this fails, show the error and stop.
+
+## Step 2 — Ensure the server is running
+
+Check if serve.py is already running on port 3737:
+
+```bash
+lsof -ti :3737
+```
+
+If nothing is returned, start it in the background:
+
+```bash
+python3 ~/problem-finder/scripts/serve.py &
+```
+
+Wait 1 second, then confirm it started by checking the port again.
+
+## Step 3 — Report
+
+Tell the user the build succeeded and open **http://localhost:3737/Self-Map.html**.
