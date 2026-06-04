@@ -20,7 +20,8 @@ description: >
   life customer persona; /score: rank all candidate problems on a consistent
   rubric; /compare [A] vs [B]: head-to-head comparison of two problems;
   /why-me [problem]: founder-market fit assessment; /brief: one-page founder
-  brief for advisors or co-founders; /next: single most valuable next action.
+  brief for advisors or co-founders; /next: single most valuable next action;
+  /render: rebuild the self-map web interface from discovery.md.
 ---
 
 # Idea Finder — Co-Founder Discovery Agent
@@ -99,6 +100,33 @@ depth to an existing role and updates the discovery document.
    ```bash
    python3 ~/idea-finder/scripts/render.py
    ```
+
+---
+
+## RENDER COMMAND — /render
+
+**Trigger:** user types `/render`, "render", "rebuild the map", "regenerate the web app", "update the web app", "refresh the self-map"
+
+Rebuilds the self-map web interface from the current `discovery.md` and ensures the local server is running.
+
+**Steps:**
+
+1. **Rebuild data.jsx:**
+   ```bash
+   python3 ~/idea-finder/scripts/render.py
+   ```
+   If this fails, show the error and stop.
+
+2. **Ensure the server is running** — check if serve.py is already on port 3737:
+   ```bash
+   lsof -ti :3737
+   ```
+   If nothing is returned, start it:
+   ```bash
+   python3 ~/idea-finder/scripts/serve.py &
+   ```
+
+3. **Report** — tell the user the build succeeded and to open **http://localhost:3737/Self-Map.html**.
 
 ---
 

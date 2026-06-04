@@ -60,9 +60,8 @@ claude plugin install github.com/zhenya-vlasov/idea-finder
 # Clone the repo
 git clone git@github.com:zhenya-vlasov/idea-finder.git ~/idea-finder
 
-# Symlink the main skill and render helper
+# Symlink the skill
 ln -s ~/idea-finder/skills/idea-finder ~/.claude/skills/idea-finder
-ln -s ~/idea-finder/skills/render ~/.claude/skills/render
 ```
 
 Open Claude Code and type `/idea-finder` to begin.
