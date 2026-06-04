@@ -50,9 +50,9 @@ A ranked list of candidate problems scored on pain intensity, frequency, willing
 
 ## Installation
 
-**Via Claude Code plugin install (recommended):**
+**Recommended:**
 ```bash
-claude plugin install github.com/zhenya-vlasov/idea-finder
+npx skills add zhenya-vlasov/idea-finder
 ```
 
 **Or manually:**
@@ -135,7 +135,7 @@ Everything is stored in `~/idea-finder/discovery.md` — a single structured mar
 - Candidate problems with scores and evidence
 - Validation plans and open questions
 
-Run `python3 ~/idea-finder/scripts/render.py` at any point to update the visual self-map.
+Type `/render` at any point to rebuild the visual self-map from the latest document.
 
 ---
 
@@ -159,9 +159,11 @@ Re-render any time you want the interface to reflect new interviews, research, o
 
 ```
 idea-finder/
-├── SKILL.md                      # Main skill — all commands
+├── .claude-plugin/
+│   └── plugin.json               # Plugin manifest
 ├── skills/
-│   └── render/SKILL.md           # /render helper skill
+│   └── idea-finder/
+│       └── SKILL.md              # Main skill — all commands including /render
 ├── scripts/
 │   ├── render.py                 # discovery.md → visual self-map
 │   └── serve.py                  # local dev server with answer persistence
