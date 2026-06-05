@@ -193,3 +193,7 @@ idea-finder/
 **Your network is the moat.** The founders who win early reach 10 paying customers without a marketing budget. The skill consistently pushes toward that.
 
 **The document is the truth.** The visual interface shows clean takeaways. The markdown file holds every raw quote, every search excerpt, every unanswered question. Don't clean it up — that's your evidence.
+
+---
+
+If this helped you think more clearly about what to build, a ⭐ on [GitHub](https://github.com/zhenya-vlasov/idea-finder) goes a long way.
