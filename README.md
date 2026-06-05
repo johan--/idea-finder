@@ -14,6 +14,8 @@ What's missing is a structured process: a way to systematically map your whole w
 
 That's what this skill does.
 
+⭐ Star this repo if you want Claude to research your ideas.
+
 ---
 
 ## What it does
